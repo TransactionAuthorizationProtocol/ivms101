@@ -1,135 +1,53 @@
 /**
  * IVMS101.2023 - interVASP Messaging Standard (2023 version)
- * This file contains type definitions for the IVMS101.2023 standard.
+ * This file contains type definitions for the IVMS101.2023 standard,
+ * reusing types from IVMS101 where possible.
  */
 
-/** Codes representing the nature of a natural person's name */
-export type NaturalPersonNameTypeCode =
-  | "ALIA"
-  | "BIRT"
-  | "MAID"
-  | "LEGL"
-  | "MISC";
+import * as V2020 from "./ivms101_2020";
 
-/** Codes representing the nature of a legal person's name */
-export type LegalPersonNameTypeCode = "LEGL" | "SHRT" | "TRAD";
-
-/** Codes identifying the nature of an address */
-export type AddressTypeCode = "HOME" | "BIZZ" | "GEOG";
-
-/** Codes identifying the type of national identification */
-export type NationalIdentifierTypeCode =
-  | "ARNU"
-  | "CCPT"
-  | "RAID"
-  | "DRLC"
-  | "FIIN"
-  | "TXID"
-  | "SOCS"
-  | "IDCD"
-  | "LEIX"
-  | "MISC";
-
-/** Codes identifying the method used to map from a national system of writing to Latin script */
-export type TransliterationMethodCode =
-  | "arab"
-  | "aran"
-  | "armn"
-  | "cyrl"
-  | "deva"
-  | "geor"
-  | "grek"
-  | "hani"
-  | "hebr"
-  | "kana"
-  | "kore"
-  | "thai"
-  | "othr";
+// Reuse types that are the same in both versions
+export type NaturalPersonNameTypeCode = V2020.NaturalPersonNameTypeCode;
+export type LegalPersonNameTypeCode = V2020.LegalPersonNameTypeCode;
+export type AddressTypeCode = V2020.AddressTypeCode;
+export type NationalIdentifierTypeCode = V2020.NationalIdentifierTypeCode;
+export type TransliterationMethodCode = V2020.TransliterationMethodCode;
 
 /** Codes identifying the version of IVMS 101 to which the payload complies */
-export type PayloadVersionCode = "101" | "101.2023";
+export enum PayloadVersionCode {
+  V2020 = "101",
+  V2023 = "101.2023",
+}
 
 /** Represents a natural person's name identifier */
-export interface NaturalPersonNameId {
-  /** This may be the family name, maiden name, or married name */
-  primaryIdentifier: string;
-  /** These may be forenames, given names, initials, or other secondary names */
-  secondaryIdentifier?: string;
+export interface NaturalPersonNameId
+  extends Omit<V2020.NaturalPersonNameId, "nameIdentifierType"> {
   /** The nature of the name specified */
   naturalPersonNameIdentifierType: NaturalPersonNameTypeCode;
 }
 
-/** Represents a legal person's name identifier */
-export interface LegalPersonNameId {
-  /** Name by which the legal person is known */
-  legalPersonName: string;
-  /** The nature of the name specified */
-  legalPersonNameIdentifierType: LegalPersonNameTypeCode;
-}
+// Reuse LegalPersonNameId as it's the same in both versions
+export type LegalPersonNameId = V2020.LegalPersonNameId;
 
-/** Represents an address */
-export interface Address {
-  /** Identifies the nature of the address */
-  addressType: AddressTypeCode;
-  /** Name of a street or thoroughfare */
-  streetName?: string;
-  /** Number that identifies the position of a building on a street */
-  buildingNumber?: string;
-  /** Name of the building or house */
-  buildingName?: string;
-  /** Identifier consisting of a group of letters and/or numbers */
-  postcode?: string;
-  /** Name of a built-up area, with defined boundaries, and a local government */
-  townName: string;
-  /** Identifies a subdivision of a country */
-  countrySubDivision?: string;
-  /** Nation with its own government */
-  country: string;
-}
+// Reuse Address as it's the same in both versions
+export type Address = V2020.Address;
 
-/** Represents a national identification */
-export interface NationalIdentification {
-  /** An identifier issued by an appropriate issuing authority */
-  nationalIdentifier: string;
-  /** Specifies the type of identifier */
-  nationalIdentifierType: NationalIdentifierTypeCode;
-  /** Country of the issuing authority */
-  countryOfIssue?: string;
-  /** A code specifying the registration authority */
-  registrationAuthority?: string;
-}
+// Reuse NationalIdentification as it's the same in both versions
+export type NationalIdentification = V2020.NationalIdentification;
 
 /** Represents a natural person */
-export interface NaturalPerson {
+export interface NaturalPerson
+  extends Omit<V2020.NaturalPerson, "name" | "customerNumber"> {
   /** The distinct words used as identification for an individual */
   name: NaturalPersonNameId[];
-  /** The particulars of a location at which a person may be communicated with */
-  geographicAddress?: Address[];
-  /** A distinct identifier used by governments to uniquely identify a person */
-  nationalIdentification?: NationalIdentification;
   /** A distinct identifier that uniquely identifies the person to the institution */
   customerIdentification?: string;
-  /** Date and place of birth of a person */
-  dateAndPlaceOfBirth?: {
-    dateOfBirth: string;
-    placeOfBirth: string;
-  };
-  /** Country in which a person resides */
-  countryOfResidence?: string;
 }
 
 /** Represents a legal person */
-export interface LegalPerson {
-  /** The name of the legal person */
-  name: LegalPersonNameId[];
-  /** The address of the legal person */
-  geographicAddress?: Address[];
+export interface LegalPerson extends Omit<V2020.LegalPerson, "customerNumber"> {
   /** A distinct identifier that uniquely identifies the person to the institution */
   customerIdentification?: string;
-  /** A distinct identifier used by governments to uniquely identify a person */
-  nationalIdentification?: NationalIdentification;
-  /** The country in which the legal person is registered */
-  countryOfRegistration?: string;
 }
 
 /** Represents either a natural person or a legal person */
@@ -155,7 +73,7 @@ export interface Beneficiary {
 }
 
 /** Represents the complete IVMS101.2023 data structure */
-export interface IVMS101_2023 {
+export interface IVMS101 {
   originator: Originator;
   beneficiary: Beneficiary;
   originatingVASP?: Person;

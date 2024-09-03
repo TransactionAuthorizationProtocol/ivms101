@@ -1,14 +1,31 @@
-import * as IVMS101 from "./ivms101";
+import * as IVMS101_2020 from "./ivms101_2020";
 import * as IVMS101_2023 from "./ivms101_2023";
+export type IVMS101 = IVMS101_2020.IVMS101 | IVMS101_2023.IVMS101;
 
+export function ivms101_version(data: IVMS101) {
+  return (data as IVMS101_2023.IVMS101_2023).payloadMetadata?.payloadVersion ===
+    IVMS101_2023.PayloadVersionCode.V2023
+    ? IVMS101_2023.PayloadVersionCode.V2023
+    : IVMS101_2023.PayloadVersionCode.V2020;
+}
+
+export function ensureVersion(
+  version: IVMS101_2023.PayloadVersionCode,
+  data: IVMS101,
+): IVMS101 {
+  if (ivms101_version(data) === version) return data;
+  if (version === IVMS101_2023.PayloadVersionCode.V2023)
+    return convertTo2023(data as IVMS101_2020.IVMS101);
+  return convertFrom2023(data as IVMS101_2023.IVMS101);
+}
 /**
  * Converts IVMS101 data to IVMS101.2023 format
  * @param data The IVMS101 data to convert
  * @returns The converted IVMS101.2023 data
  */
 export function convertTo2023(
-  data: IVMS101.IVMS101,
-): IVMS101_2023.IVMS101_2023 {
+  data: IVMS101_2020.IVMS101,
+): IVMS101_2023.IVMS101 {
   return {
     originator: {
       originatorPerson: data.originator.originatorPersons.map(convertPerson),
@@ -44,8 +61,8 @@ export function convertTo2023(
  * @returns The converted IVMS101 data
  */
 export function convertFrom2023(
-  data: IVMS101_2023.IVMS101_2023,
-): IVMS101.IVMS101 {
+  data: IVMS101_2023.IVMS101,
+): IVMS101_2020.IVMS101 {
   return {
     originator: {
       originatorPersons:
@@ -83,7 +100,7 @@ export function convertFrom2023(
  * @param person The IVMS101 Person to convert
  * @returns The converted IVMS101.2023 Person
  */
-function convertPerson(person: IVMS101.Person): IVMS101_2023.Person {
+function convertPerson(person: IVMS101_2020.Person): IVMS101_2023.Person {
   return {
     naturalPerson: person.naturalPerson
       ? convertNaturalPerson(person.naturalPerson)
@@ -99,7 +116,7 @@ function convertPerson(person: IVMS101.Person): IVMS101_2023.Person {
  * @param person The IVMS101.2023 Person to convert
  * @returns The converted IVMS101 Person
  */
-function convertPersonBack(person: IVMS101_2023.Person): IVMS101.Person {
+function convertPersonBack(person: IVMS101_2023.Person): IVMS101_2020.Person {
   return {
     naturalPerson: person.naturalPerson
       ? convertNaturalPersonBack(person.naturalPerson)
@@ -111,7 +128,7 @@ function convertPersonBack(person: IVMS101_2023.Person): IVMS101.Person {
 }
 
 function convertNaturalPerson(
-  np: IVMS101.NaturalPerson,
+  np: IVMS101_2020.NaturalPerson,
 ): IVMS101_2023.NaturalPerson {
   return {
     ...np,
@@ -125,7 +142,7 @@ function convertNaturalPerson(
 
 function convertNaturalPersonBack(
   np: IVMS101_2023.NaturalPerson,
-): IVMS101.NaturalPerson {
+): IVMS101_2020.NaturalPerson {
   const { customerIdentification, ...rest } = np;
   return {
     ...rest,
@@ -140,7 +157,9 @@ function convertNaturalPersonBack(
   };
 }
 
-function convertLegalPerson(lp: IVMS101.LegalPerson): IVMS101_2023.LegalPerson {
+function convertLegalPerson(
+  lp: IVMS101_2020.LegalPerson,
+): IVMS101_2023.LegalPerson {
   return {
     ...lp,
     customerIdentification: lp.customerNumber,
@@ -149,7 +168,7 @@ function convertLegalPerson(lp: IVMS101.LegalPerson): IVMS101_2023.LegalPerson {
 
 function convertLegalPersonBack(
   lp: IVMS101_2023.LegalPerson,
-): IVMS101.LegalPerson {
+): IVMS101_2020.LegalPerson {
   const { customerIdentification, ...rest } = lp;
   return {
     ...rest,
