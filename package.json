@@ -1,0 +1,15 @@
+{
+  "name": "ivms101-lib",
+  "version": "1.0.0",
+  "description": "IVMS101 and IVMS101.2023 TypeScript library",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "typescript": "^5.5.4",
+    "vitest": "^2.0.5"
+  }
+}
