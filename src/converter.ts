@@ -3,7 +3,7 @@ import * as IVMS101_2023 from "./ivms101_2023";
 export type IVMS101 = IVMS101_2020.IVMS101 | IVMS101_2023.IVMS101;
 
 export function ivms101_version(data: IVMS101) {
-  return (data as IVMS101_2023.IVMS101_2023).payloadMetadata?.payloadVersion ===
+  return (data as IVMS101_2023.IVMS101).payloadMetadata?.payloadVersion ===
     IVMS101_2023.PayloadVersionCode.V2023
     ? IVMS101_2023.PayloadVersionCode.V2023
     : IVMS101_2023.PayloadVersionCode.V2020;
@@ -51,7 +51,7 @@ export function convertTo2023(
       : undefined,
     payloadMetadata: {
       transliterationMethod: data.payloadMetadata?.transliterationMethod,
-      payloadVersion: "101.2023",
+      payloadVersion: IVMS101_2023.PayloadVersionCode.V2023,
     },
   };
 }
