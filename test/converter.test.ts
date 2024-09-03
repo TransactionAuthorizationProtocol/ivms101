@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import * as IVMS101 from "../src/ivms101";
+import * as IVMS101 from "../src/ivms101_2020";
 import * as IVMS101_2023 from "../src/ivms101_2023";
 import { convertTo2023, convertFrom2023 } from "../src/converter";
 

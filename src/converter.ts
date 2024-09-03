@@ -1,6 +1,11 @@
 import * as IVMS101 from "./ivms101";
 import * as IVMS101_2023 from "./ivms101_2023";
 
+/**
+ * Converts IVMS101 data to IVMS101.2023 format
+ * @param data The IVMS101 data to convert
+ * @returns The converted IVMS101.2023 data
+ */
 export function convertTo2023(
   data: IVMS101.IVMS101,
 ): IVMS101_2023.IVMS101_2023 {
@@ -33,7 +38,11 @@ export function convertTo2023(
     },
   };
 }
-
+/**
+ * Converts IVMS101.2023 data back to IVMS101 format
+ * @param data The IVMS101.2023 data to convert
+ * @returns The converted IVMS101 data
+ */
 export function convertFrom2023(
   data: IVMS101_2023.IVMS101_2023,
 ): IVMS101.IVMS101 {
@@ -69,7 +78,11 @@ export function convertFrom2023(
       : undefined,
   };
 }
-
+/**
+ * Converts a Person from IVMS101 to IVMS101.2023 format
+ * @param person The IVMS101 Person to convert
+ * @returns The converted IVMS101.2023 Person
+ */
 function convertPerson(person: IVMS101.Person): IVMS101_2023.Person {
   return {
     naturalPerson: person.naturalPerson
@@ -81,6 +94,11 @@ function convertPerson(person: IVMS101.Person): IVMS101_2023.Person {
   };
 }
 
+/**
+ * Converts a Person from IVMS101.2023 back to IVMS101 format
+ * @param person The IVMS101.2023 Person to convert
+ * @returns The converted IVMS101 Person
+ */
 function convertPersonBack(person: IVMS101_2023.Person): IVMS101.Person {
   return {
     naturalPerson: person.naturalPerson

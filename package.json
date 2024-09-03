@@ -1,5 +1,5 @@
 {
-  "name": "ivms101-lib",
+  "name": "ivms101",
   "version": "1.0.0",
   "description": "IVMS101 and IVMS101.2023 TypeScript library",
   "main": "dist/index.js",
