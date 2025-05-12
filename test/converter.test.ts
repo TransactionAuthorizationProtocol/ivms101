@@ -108,5 +108,10 @@ describe("IVMS101 Converter", () => {
         ensureVersion(IVMS101_2023.PayloadVersionCode.V2023, v2023),
       ).toEqual(v2023);
     });
+    
+    it("should default to 2023 version when no version is specified", () => {
+      expect(ensureVersion(undefined, sampleIVMS101)).toEqual(v2023);
+      expect(ensureVersion(undefined, v2023)).toEqual(v2023);
+    });
   });
 });

@@ -9,8 +9,15 @@ export function ivms101_version(data: IVMS101) {
     : IVMS101_2023.PayloadVersionCode.V2020;
 }
 
+/**
+ * Ensures the IVMS101 data is in the specified version.
+ * Defaults to IVMS101.2023 version if no version is specified.
+ * @param version The desired version of IVMS101 data (defaults to 2023 version)
+ * @param data The IVMS101 data to convert
+ * @returns The IVMS101 data in the specified version
+ */
 export function ensureVersion(
-  version: IVMS101_2023.PayloadVersionCode,
+  version: IVMS101_2023.PayloadVersionCode = IVMS101_2023.PayloadVersionCode.V2023,
   data: IVMS101,
 ): IVMS101 {
   if (ivms101_version(data) === version) return data;
