@@ -12,6 +12,7 @@ export type LegalPersonNameTypeCode = V2020.LegalPersonNameTypeCode;
 export type AddressTypeCode = V2020.AddressTypeCode;
 export type NationalIdentifierTypeCode = V2020.NationalIdentifierTypeCode;
 export type TransliterationMethodCode = V2020.TransliterationMethodCode;
+export type CountryCode = V2020.CountryCode;
 
 /** Codes identifying the version of IVMS 101 to which the payload complies */
 export enum PayloadVersionCode {

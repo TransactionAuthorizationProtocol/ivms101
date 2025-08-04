@@ -3,6 +3,10 @@
  * This file contains type definitions for the IVMS101 standard.
  */
 
+import { CountryCode } from "./countries";
+
+export type { CountryCode } from "./countries";
+
 /** Codes representing the nature of a natural person's name */
 export type NaturalPersonNameTypeCode =
   | "ALIA"
@@ -81,7 +85,7 @@ export interface Address {
   /** Identifies a subdivision of a country */
   countrySubDivision?: string;
   /** Nation with its own government */
-  country: string;
+  country: CountryCode;
 }
 
 /** Represents a national identification */
@@ -91,7 +95,7 @@ export interface NationalIdentification {
   /** Specifies the type of identifier */
   nationalIdentifierType: NationalIdentifierTypeCode;
   /** Country of the issuing authority */
-  countryOfIssue?: string;
+  countryOfIssue?: CountryCode;
   /** A code specifying the registration authority */
   registrationAuthority?: string;
 }
@@ -112,7 +116,7 @@ export interface NaturalPerson {
     placeOfBirth: string;
   };
   /** Country in which a person resides */
-  countryOfResidence?: string;
+  countryOfResidence?: CountryCode;
 }
 
 /** Represents a legal person */
@@ -126,7 +130,7 @@ export interface LegalPerson {
   /** A distinct identifier used by governments to uniquely identify a person */
   nationalIdentification?: NationalIdentification;
   /** The country in which the legal person is registered */
-  countryOfRegistration?: string;
+  countryOfRegistration?: CountryCode;
 }
 
 /** Represents either a natural person or a legal person */

@@ -1,6 +1,6 @@
 {
   "name": "ivms101",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "IVMS101 and IVMS101.2023 TypeScript library",
   "type": "module",
   "main": "dist/index.cjs",
@@ -14,7 +14,7 @@
     "build": "tsup",
     "test": "vitest"
   },
-  "dependencies": {
+  "devDependencies": {
     "tsup": "^8.4.0",
     "typescript": "^5.8.0",
     "vitest": "^3.1.0"
