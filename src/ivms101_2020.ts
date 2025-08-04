@@ -21,7 +21,20 @@ export type LegalPersonNameTypeCode = "LEGL" | "SHRT" | "TRAD";
 /** Codes identifying the nature of an address */
 export type AddressTypeCode = "HOME" | "BIZZ" | "GEOG";
 
-/** Codes identifying the type of national identification */
+/**
+ * Codes identifying the type of national identification
+ *
+ * - **ARNU**: Alien registration number - Number assigned by a government agency to identify foreign nationals
+ * - **CCPT**: Passport number - Number assigned by a passport authority
+ * - **RAID**: Registration authority identifier - Identifier of a legal entity as maintained by a registration authority
+ * - **DRLC**: Driver license number - Number assigned to a driver's license
+ * - **FIIN**: Foreign investment identity number - Number assigned to a foreign investor (other than the alien number)
+ * - **TXID**: Tax identification number - Number assigned by a tax authority to an entity
+ * - **SOCS**: Social security number - Number assigned by a social security agency
+ * - **IDCD**: Identity card number - Number assigned by a national authority to an identity card
+ * - **LEIX**: Legal Entity Identifier - Legal Entity Identifier (LEI) assigned in accordance with ISO 17442
+ * - **MISC**: Miscellaneous - Other types of national identification not covered by the above codes
+ */
 export type NationalIdentifierTypeCode =
   | "ARNU"
   | "CCPT"
@@ -33,6 +46,16 @@ export type NationalIdentifierTypeCode =
   | "IDCD"
   | "LEIX"
   | "MISC";
+
+export type LegalEntityNationalIdentifierTypeCode = Omit<
+  NationalIdentifierTypeCode,
+  "ARNU" | "CCPT" | "DRLC" | "SOCS" | "IDCD"
+>;
+
+export type NaturalPersonNationalIdentifierTypeCode = Omit<
+  NationalIdentifierTypeCode,
+  "LEIX" | "RAID"
+>;
 
 /** Codes identifying the method used to map from a national system of writing to Latin script */
 export type TransliterationMethodCode =
@@ -89,11 +112,11 @@ export interface Address {
 }
 
 /** Represents a national identification */
-export interface NationalIdentification {
+export interface NationalIdentification<C> {
   /** An identifier issued by an appropriate issuing authority */
   nationalIdentifier: string;
   /** Specifies the type of identifier */
-  nationalIdentifierType: NationalIdentifierTypeCode;
+  nationalIdentifierType: C;
   /** Country of the issuing authority */
   countryOfIssue?: CountryCode;
   /** A code specifying the registration authority */
@@ -107,7 +130,7 @@ export interface NaturalPerson {
   /** The particulars of a location at which a person may be communicated with */
   geographicAddress?: Address[];
   /** A distinct identifier used by governments to uniquely identify a person */
-  nationalIdentification?: NationalIdentification;
+  nationalIdentification?: NationalIdentification<NaturalPersonNationalIdentifierTypeCode>;
   /** A distinct identifier that uniquely identifies the person to the institution */
   customerNumber?: string;
   /** Date and place of birth of a person */
@@ -128,7 +151,7 @@ export interface LegalPerson {
   /** A distinct identifier that uniquely identifies the person to the institution */
   customerNumber?: string;
   /** A distinct identifier used by governments to uniquely identify a person */
-  nationalIdentification?: NationalIdentification;
+  nationalIdentification?: NationalIdentification<LegalEntityNationalIdentifierTypeCode>;
   /** The country in which the legal person is registered */
   countryOfRegistration?: CountryCode;
 }

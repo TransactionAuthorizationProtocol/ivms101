@@ -34,7 +34,8 @@ export type LegalPersonNameId = V2020.LegalPersonNameId;
 export type Address = V2020.Address;
 
 // Reuse NationalIdentification as it's the same in both versions
-export type NationalIdentification = V2020.NationalIdentification;
+export type NationalIdentification =
+  V2020.NationalIdentification<V2020.NationalIdentifierTypeCode>;
 
 /** Represents a natural person */
 export interface NaturalPerson
