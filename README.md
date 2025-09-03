@@ -7,6 +7,7 @@ This library provides TypeScript type definitions and conversion utilities for t
 - Type definitions for IVMS101 2020 and 2023 versions
 - Conversion functions between 2020 and 2023 formats
 - Version detection and automatic conversion
+- Runtime validation using Zod schemas
 
 ## Installation
 
@@ -51,6 +52,45 @@ function processIVMS101(data: IVMS101_2020.IVMS101 | IVMS101_2023.IVMS101) {
 }
 ```
 
+### Runtime Validation
+
+Use Zod schemas for runtime validation of IVMS101 data:
+
+```typescript
+import { 
+  validateIVMS101, 
+  isValidIVMS101, 
+  isValidIVMS101_2020, 
+  isValidIVMS101_2023,
+  IVMS101Schema,
+  IVMS101_2020Schema,
+  IVMS101_2023Schema 
+} from 'ivms101';
+
+// Validate and parse data (throws on invalid data)
+const validData = validateIVMS101(unknownData);
+
+// Type guards for version checking
+if (isValidIVMS101_2020(data)) {
+  // data is now typed as IVMS101_2020.IVMS101
+}
+
+if (isValidIVMS101_2023(data)) {
+  // data is now typed as IVMS101_2023.IVMS101
+}
+
+// Check if data is valid (returns boolean)
+const isValid = isValidIVMS101(data);
+
+// Use schemas directly for more control
+const result = IVMS101Schema.safeParse(data);
+if (result.success) {
+  console.log('Valid data:', result.data);
+} else {
+  console.log('Validation errors:', result.error.issues);
+}
+```
+
 ## API Reference
 
 ### `ensureVersion(version?: PayloadVersionCode, data: IVMS101): IVMS101`
@@ -68,6 +108,32 @@ Converts IVMS101 2020 data to 2023 format.
 ### `convertFrom2023(data: IVMS101_2023.IVMS101): IVMS101_2020.IVMS101`
 
 Converts IVMS101 2023 data back to 2020 format.
+
+## Validation API
+
+### `validateIVMS101(data: unknown): IVMS101`
+
+Validates and parses IVMS101 data (either version). Throws a ZodError if validation fails.
+
+### `isValidIVMS101(data: unknown): boolean`
+
+Type guard that returns true if data is valid IVMS101 (either version).
+
+### `isValidIVMS101_2020(data: unknown): boolean`
+
+Type guard that returns true if data is valid IVMS101 2020 format.
+
+### `isValidIVMS101_2023(data: unknown): boolean`
+
+Type guard that returns true if data is valid IVMS101 2023 format.
+
+### Zod Schemas
+
+- `IVMS101Schema` - Union schema for either version
+- `IVMS101_2020Schema` - Schema for 2020 version only  
+- `IVMS101_2023Schema` - Schema for 2023 version only
+
+These schemas can be used directly with Zod's `.parse()`, `.safeParse()`, and other methods for more advanced validation scenarios.
 
 ## Contributing
 
