@@ -16,3 +16,6 @@ export {
   type IVMS101_2023Type,
   type IVMS101Type
 } from "./validator";
+
+// Export fast-check arbitraries for property-based testing
+export * as arbitraries from "./arbitraries";

@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import * as fc from "fast-check";
 import * as IVMS101_2020 from "../src/ivms101_2020";
 import * as IVMS101_2023 from "../src/ivms101_2023";
 import {
@@ -10,6 +11,7 @@ import {
   isValidIVMS101_2023,
   isValidIVMS101,
 } from "../src/validator";
+import * as arb from "../src/arbitraries";
 
 describe("IVMS101 Validator", () => {
   // Test data for IVMS101 2020
@@ -633,6 +635,98 @@ describe("IVMS101 Validator", () => {
       };
       const result = IVMS101_2020Schema.safeParse(dataWithInvalidSequence);
       expect(result.success).toBe(false);
+    });
+  });
+  describe("Property-based Validation Tests using Fast-Check", () => {
+    it("should validate all generated IVMS101 2020 structures", () => {
+      fc.assert(fc.property(arb.ivms101_2020(), (ivms2020) => {
+        const result = IVMS101_2020Schema.safeParse(ivms2020);
+        expect(result.success).toBe(true);
+      }));
+    });
+
+    it("should validate all generated IVMS101 2023 structures", () => {
+      fc.assert(fc.property(arb.ivms101_2023Valid(), (ivms2023) => {
+        const result = IVMS101_2023Schema.safeParse(ivms2023);
+        expect(result.success).toBe(true);
+      }));
+    });
+
+    it("should accept all generated data via union schema", () => {
+      fc.assert(fc.property(arb.ivms101(), (ivms) => {
+        const result = IVMS101Schema.safeParse(ivms);
+        expect(result.success).toBe(true);
+      }));
+    });
+
+    it("should validate generated data via utility functions", () => {
+      fc.assert(fc.property(arb.ivms101_2020(), (ivms2020) => {
+        expect(isValidIVMS101_2020(ivms2020)).toBe(true);
+        expect(isValidIVMS101(ivms2020)).toBe(true);
+        expect(() => validateIVMS101(ivms2020)).not.toThrow();
+      }));
+
+      fc.assert(fc.property(arb.ivms101_2023Valid(), (ivms2023) => {
+        expect(isValidIVMS101_2023(ivms2023)).toBe(true);
+        expect(isValidIVMS101(ivms2023)).toBe(true);
+        expect(() => validateIVMS101(ivms2023)).not.toThrow();
+      }));
+    });
+
+    it("should correctly identify version-specific data", () => {
+      fc.assert(fc.property(arb.ivms101_2020(), (ivms2020) => {
+        // 2020 data should validate as 2020 but not as 2023
+        expect(isValidIVMS101_2020(ivms2020)).toBe(true);
+        expect(isValidIVMS101_2023(ivms2020)).toBe(false);
+      }));
+
+      fc.assert(fc.property(arb.ivms101_2023Valid(), (ivms2023) => {
+        // 2023 data should validate as 2023 but not as 2020
+        expect(isValidIVMS101_2023(ivms2023)).toBe(true);
+        expect(isValidIVMS101_2020(ivms2023)).toBe(false);
+      }));
+    });
+
+    it("should validate generated person structures individually", () => {
+      fc.assert(fc.property(arb.naturalPerson(), (person) => {
+        // Natural person should have valid structure
+        expect(person.name.length).toBeGreaterThan(0);
+        person.name.forEach(nameId => {
+          expect(nameId.primaryIdentifier.trim().length).toBeGreaterThan(0);
+          expect(["ALIA", "BIRT", "MAID", "LEGL", "MISC"]).toContain(nameId.nameIdentifierType);
+        });
+      }));
+
+      fc.assert(fc.property(arb.legalPerson(), (person) => {
+        // Legal person should have valid structure
+        expect(person.name.length).toBeGreaterThan(0);
+        person.name.forEach(nameId => {
+          expect(nameId.legalPersonName.trim().length).toBeGreaterThan(0);
+          expect(["LEGL", "SHRT", "TRAD"]).toContain(nameId.legalPersonNameIdentifierType);
+        });
+      }));
+    });
+
+    it("should validate generated addresses", () => {
+      fc.assert(fc.property(arb.address(), (address) => {
+        expect(["HOME", "BIZZ", "GEOG"]).toContain(address.addressType);
+        expect(address.townName.trim().length).toBeGreaterThan(0);
+        expect(address.country.length).toBe(2); // ISO country codes
+      }));
+    });
+
+    it("should validate national identification structures", () => {
+      fc.assert(fc.property(arb.naturalPersonNationalIdentification(), (natId) => {
+        expect(natId.nationalIdentifier.trim().length).toBeGreaterThan(0);
+        const validNaturalPersonTypes = ["ARNU", "CCPT", "DRLC", "FIIN", "TXID", "SOCS", "IDCD", "MISC"];
+        expect(validNaturalPersonTypes).toContain(natId.nationalIdentifierType);
+      }));
+
+      fc.assert(fc.property(arb.legalEntityNationalIdentification(), (natId) => {
+        expect(natId.nationalIdentifier.trim().length).toBeGreaterThan(0);
+        const validLegalEntityTypes = ["RAID", "FIIN", "TXID", "LEIX", "MISC"];
+        expect(validLegalEntityTypes).toContain(natId.nationalIdentifierType);
+      }));
     });
   });
 });
