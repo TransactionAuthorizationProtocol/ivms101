@@ -14,13 +14,15 @@ describe("IVMS101 Converter", () => {
       originatorPersons: [
         {
           naturalPerson: {
-            name: [
-              {
-                primaryIdentifier: "Smith",
-                secondaryIdentifier: "John",
-                nameIdentifierType: "LEGL",
-              },
-            ],
+            name: {
+              nameIdentifier: [
+                {
+                  primaryIdentifier: "Smith",
+                  secondaryIdentifier: "John",
+                  nameIdentifierType: "LEGL",
+                },
+              ],
+            },
             customerNumber: "123456",
           },
         },
@@ -31,12 +33,14 @@ describe("IVMS101 Converter", () => {
       beneficiaryPersons: [
         {
           legalPerson: {
-            name: [
-              {
-                legalPersonName: "Acme Corp",
-                legalPersonNameIdentifierType: "LEGL",
-              },
-            ],
+            name: {
+              nameIdentifier: [
+                {
+                  legalPersonName: "Acme Corp",
+                  legalPersonNameIdentifierType: "LEGL",
+                },
+              ],
+            },
             customerNumber: "789012",
           },
         },
@@ -57,8 +61,8 @@ describe("IVMS101 Converter", () => {
     const converted = convertTo2023(sampleIVMS101);
 
     expect(
-      converted.originator.originatorPerson[0].naturalPerson?.name[0]
-        .naturalPersonNameIdentifierType,
+      converted.originator.originatorPerson[0].naturalPerson?.name
+        .nameIdentifier[0].naturalPersonNameIdentifierType,
     ).toBe("LEGL");
     expect(
       converted.originator.originatorPerson[0].naturalPerson
@@ -108,7 +112,7 @@ describe("IVMS101 Converter", () => {
         ensureVersion(IVMS101_2023.PayloadVersionCode.V2023, v2023),
       ).toEqual(v2023);
     });
-    
+
     it("should default to 2023 version when no version is specified", () => {
       expect(ensureVersion(undefined, sampleIVMS101)).toEqual(v2023);
       expect(ensureVersion(undefined, v2023)).toEqual(v2023);

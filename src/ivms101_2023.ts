@@ -41,7 +41,7 @@ export type NationalIdentification =
 export interface NaturalPerson
   extends Omit<V2020.NaturalPerson, "name" | "customerNumber"> {
   /** The distinct words used as identification for an individual */
-  name: NaturalPersonNameId[];
+  name: { nameIdentifier: NaturalPersonNameId[] };
   /** A distinct identifier that uniquely identifies the person to the institution */
   customerIdentification?: string;
 }
