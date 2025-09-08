@@ -8,7 +8,7 @@ import {
   validateIVMS101,
   isValidIVMS101_2020,
   isValidIVMS101_2023,
-  isValidIVMS101
+  isValidIVMS101,
 } from "../src/validator";
 
 describe("IVMS101 Validator", () => {
@@ -18,13 +18,15 @@ describe("IVMS101 Validator", () => {
       originatorPersons: [
         {
           naturalPerson: {
-            name: [
-              {
-                primaryIdentifier: "Smith",
-                secondaryIdentifier: "John",
-                nameIdentifierType: "LEGL",
-              },
-            ],
+            name: {
+              nameIdentifier: [
+                {
+                  primaryIdentifier: "Smith",
+                  secondaryIdentifier: "John",
+                  nameIdentifierType: "LEGL",
+                },
+              ],
+            },
             customerNumber: "123456",
             geographicAddress: [
               {
@@ -32,19 +34,19 @@ describe("IVMS101 Validator", () => {
                 streetName: "Main St",
                 buildingNumber: "123",
                 townName: "New York",
-                country: "US"
-              }
+                country: "US",
+              },
             ],
             nationalIdentification: {
               nationalIdentifier: "123456789",
               nationalIdentifierType: "SOCS",
-              countryOfIssue: "US"
+              countryOfIssue: "US",
             },
             dateAndPlaceOfBirth: {
               dateOfBirth: "1990-01-01",
-              placeOfBirth: "New York, US"
+              placeOfBirth: "New York, US",
             },
-            countryOfResidence: "US"
+            countryOfResidence: "US",
           },
         },
       ],
@@ -54,12 +56,14 @@ describe("IVMS101 Validator", () => {
       beneficiaryPersons: [
         {
           legalPerson: {
-            name: [
-              {
-                legalPersonName: "Acme Corp",
-                legalPersonNameIdentifierType: "LEGL",
-              },
-            ],
+            name: {
+              nameIdentifier: [
+                {
+                  legalPersonName: "Acme Corp",
+                  legalPersonNameIdentifierType: "LEGL",
+                },
+              ],
+            },
             customerNumber: "789012",
             geographicAddress: [
               {
@@ -67,15 +71,15 @@ describe("IVMS101 Validator", () => {
                 streetName: "Business Ave",
                 buildingNumber: "456",
                 townName: "Los Angeles",
-                country: "US"
-              }
+                country: "US",
+              },
             ],
             nationalIdentification: {
               nationalIdentifier: "987654321",
               nationalIdentifierType: "LEIX",
-              countryOfIssue: "US"
+              countryOfIssue: "US",
             },
-            countryOfRegistration: "US"
+            countryOfRegistration: "US",
           },
         },
       ],
@@ -83,43 +87,49 @@ describe("IVMS101 Validator", () => {
     },
     originatingVASP: {
       legalPerson: {
-        name: [
-          {
-            legalPersonName: "Origin VASP",
-            legalPersonNameIdentifierType: "LEGL",
-          },
-        ],
-        customerNumber: "VASP001"
-      }
+        name: {
+          nameIdentifier: [
+            {
+              legalPersonName: "Origin VASP",
+              legalPersonNameIdentifierType: "LEGL",
+            },
+          ],
+        },
+        customerNumber: "VASP001",
+      },
     },
     beneficiaryVASP: {
       legalPerson: {
-        name: [
-          {
-            legalPersonName: "Beneficiary VASP",
-            legalPersonNameIdentifierType: "LEGL",
-          },
-        ],
-        customerNumber: "VASP002"
-      }
+        name: {
+          nameIdentifier: [
+            {
+              legalPersonName: "Beneficiary VASP",
+              legalPersonNameIdentifierType: "LEGL",
+            },
+          ],
+        },
+        customerNumber: "VASP002",
+      },
     },
     transferPath: {
       transferPath: [
         {
           intermediaryVASP: {
             legalPerson: {
-              name: [
-                {
-                  legalPersonName: "Intermediate VASP",
-                  legalPersonNameIdentifierType: "LEGL",
-                },
-              ],
-              customerNumber: "VASP003"
-            }
+              name: {
+                nameIdentifier: [
+                  {
+                    legalPersonName: "Intermediate VASP",
+                    legalPersonNameIdentifierType: "LEGL",
+                  },
+                ],
+              },
+              customerNumber: "VASP003",
+            },
           },
-          sequence: 1
-        }
-      ]
+          sequence: 1,
+        },
+      ],
     },
     payloadMetadata: {
       transliterationMethod: ["othr"],
@@ -132,13 +142,15 @@ describe("IVMS101 Validator", () => {
       originatorPerson: [
         {
           naturalPerson: {
-            name: [
-              {
-                primaryIdentifier: "Smith",
-                secondaryIdentifier: "John",
-                naturalPersonNameIdentifierType: "LEGL",
-              },
-            ],
+            name: {
+              nameIdentifier: [
+                {
+                  primaryIdentifier: "Smith",
+                  secondaryIdentifier: "John",
+                  naturalPersonNameIdentifierType: "LEGL",
+                },
+              ],
+            },
             customerIdentification: "123456",
             geographicAddress: [
               {
@@ -146,19 +158,19 @@ describe("IVMS101 Validator", () => {
                 streetName: "Main St",
                 buildingNumber: "123",
                 townName: "New York",
-                country: "US"
-              }
+                country: "US",
+              },
             ],
             nationalIdentification: {
               nationalIdentifier: "123456789",
               nationalIdentifierType: "SOCS",
-              countryOfIssue: "US"
+              countryOfIssue: "US",
             },
             dateAndPlaceOfBirth: {
               dateOfBirth: "1990-01-01",
-              placeOfBirth: "New York, US"
+              placeOfBirth: "New York, US",
             },
-            countryOfResidence: "US"
+            countryOfResidence: "US",
           },
         },
       ],
@@ -168,12 +180,14 @@ describe("IVMS101 Validator", () => {
       beneficiaryPerson: [
         {
           legalPerson: {
-            name: [
-              {
-                legalPersonName: "Acme Corp",
-                legalPersonNameIdentifierType: "LEGL",
-              },
-            ],
+            name: {
+              nameIdentifier: [
+                {
+                  legalPersonName: "Acme Corp",
+                  legalPersonNameIdentifierType: "LEGL",
+                },
+              ],
+            },
             customerIdentification: "789012",
             geographicAddress: [
               {
@@ -181,15 +195,15 @@ describe("IVMS101 Validator", () => {
                 streetName: "Business Ave",
                 buildingNumber: "456",
                 townName: "Los Angeles",
-                country: "US"
-              }
+                country: "US",
+              },
             ],
             nationalIdentification: {
               nationalIdentifier: "987654321",
               nationalIdentifierType: "LEIX",
-              countryOfIssue: "US"
+              countryOfIssue: "US",
             },
-            countryOfRegistration: "US"
+            countryOfRegistration: "US",
           },
         },
       ],
@@ -197,43 +211,49 @@ describe("IVMS101 Validator", () => {
     },
     originatingVASP: {
       legalPerson: {
-        name: [
-          {
-            legalPersonName: "Origin VASP",
-            legalPersonNameIdentifierType: "LEGL",
-          },
-        ],
-        customerIdentification: "VASP001"
-      }
+        name: {
+          nameIdentifier: [
+            {
+              legalPersonName: "Origin VASP",
+              legalPersonNameIdentifierType: "LEGL",
+            },
+          ],
+        },
+        customerIdentification: "VASP001",
+      },
     },
     beneficiaryVASP: {
       legalPerson: {
-        name: [
-          {
-            legalPersonName: "Beneficiary VASP",
-            legalPersonNameIdentifierType: "LEGL",
-          },
-        ],
-        customerIdentification: "VASP002"
-      }
+        name: {
+          nameIdentifier: [
+            {
+              legalPersonName: "Beneficiary VASP",
+              legalPersonNameIdentifierType: "LEGL",
+            },
+          ],
+        },
+        customerIdentification: "VASP002",
+      },
     },
     transferPath: {
       transferPath: [
         {
           intermediaryVASP: {
             legalPerson: {
-              name: [
-                {
-                  legalPersonName: "Intermediate VASP",
-                  legalPersonNameIdentifierType: "LEGL",
-                },
-              ],
-              customerIdentification: "VASP003"
-            }
+              name: {
+                nameIdentifier: [
+                  {
+                    legalPersonName: "Intermediate VASP",
+                    legalPersonNameIdentifierType: "LEGL",
+                  },
+                ],
+              },
+              customerIdentification: "VASP003",
+            },
           },
-          sequence: 1
-        }
-      ]
+          sequence: 1,
+        },
+      ],
     },
     payloadMetadata: {
       transliterationMethod: ["othr"],
@@ -256,8 +276,8 @@ describe("IVMS101 Validator", () => {
     it("should reject invalid data - missing required fields", () => {
       const invalidData = {
         originator: {
-          originatorPersons: []
-        }
+          originatorPersons: [],
+        },
         // missing beneficiary
       };
       const result = IVMS101_2020Schema.safeParse(invalidData);
@@ -272,16 +292,18 @@ describe("IVMS101 Validator", () => {
           originatorPersons: [
             {
               naturalPerson: {
-                name: [
-                  {
-                    primaryIdentifier: "Smith",
-                    nameIdentifierType: "INVALID_TYPE"
-                  }
-                ]
-              }
-            }
-          ]
-        }
+                name: {
+                  nameIdentifier: [
+                    {
+                      primaryIdentifier: "Smith",
+                      nameIdentifierType: "INVALID_TYPE",
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
       };
       const result = IVMS101_2020Schema.safeParse(invalidData);
       expect(result.success).toBe(false);
@@ -293,30 +315,34 @@ describe("IVMS101 Validator", () => {
           originatorPersons: [
             {
               naturalPerson: {
-                name: [
-                  {
-                    primaryIdentifier: "Smith",
-                    nameIdentifierType: "LEGL"
-                  }
-                ]
-              }
-            }
-          ]
+                name: {
+                  nameIdentifier: [
+                    {
+                      primaryIdentifier: "Smith",
+                      nameIdentifierType: "LEGL",
+                    },
+                  ],
+                },
+              },
+            },
+          ],
         },
         beneficiary: {
           beneficiaryPersons: [
             {
               legalPerson: {
-                name: [
-                  {
-                    legalPersonName: "Acme Corp",
-                    legalPersonNameIdentifierType: "LEGL"
-                  }
-                ]
-              }
-            }
-          ]
-        }
+                name: {
+                  nameIdentifier: [
+                    {
+                      legalPersonName: "Acme Corp",
+                      legalPersonNameIdentifierType: "LEGL",
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
       };
       const result = IVMS101_2020Schema.safeParse(minimalData);
       expect(result.success).toBe(true);
@@ -339,8 +365,8 @@ describe("IVMS101 Validator", () => {
       const invalidData = {
         ...validIVMS101_2023,
         originator: {
-          originatorPersons: validIVMS101_2023.originator.originatorPerson // wrong field name
-        }
+          originatorPersons: validIVMS101_2023.originator.originatorPerson, // wrong field name
+        },
       };
       const result = IVMS101_2023Schema.safeParse(invalidData);
       expect(result.success).toBe(false);
@@ -352,30 +378,34 @@ describe("IVMS101 Validator", () => {
           originatorPerson: [
             {
               naturalPerson: {
-                name: [
-                  {
-                    primaryIdentifier: "Smith",
-                    naturalPersonNameIdentifierType: "LEGL"
-                  }
-                ]
-              }
-            }
-          ]
+                name: {
+                  nameIdentifier: [
+                    {
+                      primaryIdentifier: "Smith",
+                      naturalPersonNameIdentifierType: "LEGL",
+                    },
+                  ],
+                },
+              },
+            },
+          ],
         },
         beneficiary: {
           beneficiaryPerson: [
             {
               legalPerson: {
-                name: [
-                  {
-                    legalPersonName: "Acme Corp",
-                    legalPersonNameIdentifierType: "LEGL"
-                  }
-                ]
-              }
-            }
-          ]
-        }
+                name: {
+                  nameIdentifier: [
+                    {
+                      legalPersonName: "Acme Corp",
+                      legalPersonNameIdentifierType: "LEGL",
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
       };
       const result = IVMS101_2023Schema.safeParse(minimalData);
       expect(result.success).toBe(true);
@@ -468,23 +498,25 @@ describe("IVMS101 Validator", () => {
           originatorPersons: [
             {
               naturalPerson: {
-                name: [
-                  {
-                    primaryIdentifier: "Smith",
-                    nameIdentifierType: "LEGL"
-                  }
-                ],
+                name: {
+                  nameIdentifier: [
+                    {
+                      primaryIdentifier: "Smith",
+                      nameIdentifierType: "LEGL",
+                    },
+                  ],
+                },
                 geographicAddress: [
                   {
                     addressType: "HOME",
                     townName: "Test City",
-                    country: "XX" // Invalid country code
-                  }
-                ]
-              }
-            }
-          ]
-        }
+                    country: "XX", // Invalid country code
+                  },
+                ],
+              },
+            },
+          ],
+        },
       };
       const result = IVMS101_2020Schema.safeParse(dataWithInvalidCountry);
       expect(result.success).toBe(false);
@@ -498,21 +530,23 @@ describe("IVMS101 Validator", () => {
           originatorPersons: [
             {
               naturalPerson: {
-                name: [
-                  {
-                    primaryIdentifier: "Smith",
-                    nameIdentifierType: "LEGL"
-                  }
-                ],
+                name: {
+                  nameIdentifier: [
+                    {
+                      primaryIdentifier: "Smith",
+                      nameIdentifierType: "LEGL",
+                    },
+                  ],
+                },
                 nationalIdentification: {
                   nationalIdentifier: "123",
                   nationalIdentifierType: "LEIX", // Invalid for natural person
-                  countryOfIssue: "US"
-                }
-              }
-            }
-          ]
-        }
+                  countryOfIssue: "US",
+                },
+              },
+            },
+          ],
+        },
       };
       const result = IVMS101_2020Schema.safeParse(dataWithInvalidNatId);
       expect(result.success).toBe(false);
@@ -526,21 +560,23 @@ describe("IVMS101 Validator", () => {
           beneficiaryPersons: [
             {
               legalPerson: {
-                name: [
-                  {
-                    legalPersonName: "Acme Corp",
-                    legalPersonNameIdentifierType: "LEGL"
-                  }
-                ],
+                name: {
+                  nameIdentifier: [
+                    {
+                      legalPersonName: "Acme Corp",
+                      legalPersonNameIdentifierType: "LEGL",
+                    },
+                  ],
+                },
                 nationalIdentification: {
                   nationalIdentifier: "123",
                   nationalIdentifierType: "SOCS", // Invalid for legal person
-                  countryOfIssue: "US"
-                }
-              }
-            }
-          ]
-        }
+                  countryOfIssue: "US",
+                },
+              },
+            },
+          ],
+        },
       };
       const result = IVMS101_2020Schema.safeParse(dataWithInvalidNatId);
       expect(result.success).toBe(false);
@@ -549,22 +585,24 @@ describe("IVMS101 Validator", () => {
     it("should require at least one person in arrays", () => {
       const dataWithEmptyArray = {
         originator: {
-          originatorPersons: []
+          originatorPersons: [],
         },
         beneficiary: {
           beneficiaryPersons: [
             {
               legalPerson: {
-                name: [
-                  {
-                    legalPersonName: "Acme Corp",
-                    legalPersonNameIdentifierType: "LEGL"
-                  }
-                ]
-              }
-            }
-          ]
-        }
+                name: {
+                  nameIdentifier: [
+                    {
+                      legalPersonName: "Acme Corp",
+                      legalPersonNameIdentifierType: "LEGL",
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        },
       };
       const result = IVMS101_2020Schema.safeParse(dataWithEmptyArray);
       expect(result.success).toBe(false);
@@ -578,18 +616,20 @@ describe("IVMS101 Validator", () => {
             {
               intermediaryVASP: {
                 legalPerson: {
-                  name: [
-                    {
-                      legalPersonName: "Intermediate VASP",
-                      legalPersonNameIdentifierType: "LEGL"
-                    }
-                  ]
-                }
+                  name: {
+                    nameIdentifier: [
+                      {
+                        legalPersonName: "Intermediate VASP",
+                        legalPersonNameIdentifierType: "LEGL",
+                      },
+                    ],
+                  },
+                },
               },
-              sequence: "invalid" // Should be number
-            }
-          ]
-        }
+              sequence: "invalid", // Should be number
+            },
+          ],
+        },
       };
       const result = IVMS101_2020Schema.safeParse(dataWithInvalidSequence);
       expect(result.success).toBe(false);

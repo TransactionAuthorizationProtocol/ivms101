@@ -126,7 +126,7 @@ export interface NationalIdentification<C> {
 /** Represents a natural person */
 export interface NaturalPerson {
   /** The distinct words used as identification for an individual */
-  name: NaturalPersonNameId[];
+  name: { nameIdentifier: NaturalPersonNameId[] };
   /** The particulars of a location at which a person may be communicated with */
   geographicAddress?: Address[];
   /** A distinct identifier used by governments to uniquely identify a person */
@@ -145,7 +145,7 @@ export interface NaturalPerson {
 /** Represents a legal person */
 export interface LegalPerson {
   /** The name of the legal person */
-  name: LegalPersonNameId[];
+  name: { nameIdentifier: LegalPersonNameId[] };
   /** The address of the legal person */
   geographicAddress?: Address[];
   /** A distinct identifier that uniquely identifies the person to the institution */

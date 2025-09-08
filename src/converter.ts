@@ -17,7 +17,8 @@ export function ivms101_version(data: IVMS101) {
  * @returns The IVMS101 data in the specified version
  */
 export function ensureVersion(
-  version: IVMS101_2023.PayloadVersionCode = IVMS101_2023.PayloadVersionCode.V2023,
+  version: IVMS101_2023.PayloadVersionCode = IVMS101_2023.PayloadVersionCode
+    .V2023,
   data: IVMS101,
 ): IVMS101 {
   if (ivms101_version(data) === version) return data;
@@ -139,10 +140,12 @@ function convertNaturalPerson(
 ): IVMS101_2023.NaturalPerson {
   return {
     ...np,
-    name: np.name.map((n) => ({
-      ...n,
-      naturalPersonNameIdentifierType: n.nameIdentifierType,
-    })),
+    name: {
+      nameIdentifier: np.name.nameIdentifier.map((n) => ({
+        ...n,
+        naturalPersonNameIdentifierType: n.nameIdentifierType,
+      })),
+    },
     customerIdentification: np.customerNumber,
   };
 }
@@ -153,13 +156,15 @@ function convertNaturalPersonBack(
   const { customerIdentification, ...rest } = np;
   return {
     ...rest,
-    name: np.name.map((n) => {
-      const { naturalPersonNameIdentifierType, ...nameRest } = n;
-      return {
-        ...nameRest,
-        nameIdentifierType: naturalPersonNameIdentifierType,
-      };
-    }),
+    name: {
+      nameIdentifier: np.name.nameIdentifier.map((n) => {
+        const { naturalPersonNameIdentifierType, ...nameRest } = n;
+        return {
+          ...nameRest,
+          nameIdentifierType: naturalPersonNameIdentifierType,
+        };
+      }),
+    },
     customerNumber: customerIdentification,
   };
 }
