@@ -180,9 +180,9 @@ describe("IVMS101 Converter", () => {
         original.originator.originatorPersons.forEach((person, idx) => {
           if (person.naturalPerson) {
             const convertedPerson = converted.originator.originatorPerson[idx].naturalPerson!;
-            expect(convertedPerson.name.length).toBe(person.naturalPerson.name.length);
-            person.naturalPerson.name.forEach((nameId, nameIdx) => {
-              const convertedNameId = convertedPerson.name[nameIdx];
+            expect(convertedPerson.name.nameIdentifier.length).toBe(person.naturalPerson.name.nameIdentifier.length);
+            person.naturalPerson.name.nameIdentifier.forEach((nameId, nameIdx) => {
+              const convertedNameId = convertedPerson.name.nameIdentifier[nameIdx];
               expect(convertedNameId.primaryIdentifier).toBe(nameId.primaryIdentifier);
               expect(convertedNameId.secondaryIdentifier).toBe(nameId.secondaryIdentifier);
               expect(convertedNameId.naturalPersonNameIdentifierType).toBe(nameId.nameIdentifierType);

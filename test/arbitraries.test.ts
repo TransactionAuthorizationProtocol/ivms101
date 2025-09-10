@@ -63,9 +63,10 @@ describe("IVMS101 Fast-Check Property-Based Tests", () => {
   describe("Person Generation", () => {
     it("should generate valid natural persons", () => {
       fc.assert(fc.property(arb.naturalPerson(), (person) => {
-        expect(Array.isArray(person.name)).toBe(true);
-        expect(person.name.length).toBeGreaterThan(0);
-        person.name.forEach(nameId => {
+        expect(person.name).toHaveProperty("nameIdentifier");
+        expect(Array.isArray(person.name.nameIdentifier)).toBe(true);
+        expect(person.name.nameIdentifier.length).toBeGreaterThan(0);
+        person.name.nameIdentifier.forEach(nameId => {
           expect(nameId.primaryIdentifier).toBeTypeOf("string");
           expect(nameId.primaryIdentifier.length).toBeGreaterThan(0);
         });
@@ -74,9 +75,10 @@ describe("IVMS101 Fast-Check Property-Based Tests", () => {
 
     it("should generate valid legal persons", () => {
       fc.assert(fc.property(arb.legalPerson(), (person) => {
-        expect(Array.isArray(person.name)).toBe(true);
-        expect(person.name.length).toBeGreaterThan(0);
-        person.name.forEach(nameId => {
+        expect(person.name).toHaveProperty("nameIdentifier");
+        expect(Array.isArray(person.name.nameIdentifier)).toBe(true);
+        expect(person.name.nameIdentifier.length).toBeGreaterThan(0);
+        person.name.nameIdentifier.forEach(nameId => {
           expect(nameId.legalPersonName).toBeTypeOf("string");
           expect(nameId.legalPersonName.length).toBeGreaterThan(0);
         });
@@ -145,8 +147,8 @@ describe("IVMS101 Fast-Check Property-Based Tests", () => {
         // Check originator names are preserved
         original.originator.originatorPersons.forEach((person, idx) => {
           if (person.naturalPerson) {
-            person.naturalPerson.name.forEach((nameId, nameIdx) => {
-              const convertedName = converted2023.originator.originatorPerson[idx].naturalPerson?.name[nameIdx];
+            person.naturalPerson.name.nameIdentifier.forEach((nameId, nameIdx) => {
+              const convertedName = converted2023.originator.originatorPerson[idx].naturalPerson?.name.nameIdentifier[nameIdx];
               expect(convertedName?.primaryIdentifier).toBe(nameId.primaryIdentifier);
               expect(convertedName?.secondaryIdentifier).toBe(nameId.secondaryIdentifier);
               // Note: nameIdentifierType becomes naturalPersonNameIdentifierType in 2023
@@ -283,10 +285,10 @@ describe("IVMS101 Fast-Check Property-Based Tests", () => {
         // All persons should have at least one name
         [...ivms.originator.originatorPersons, ...ivms.beneficiary.beneficiaryPersons].forEach(person => {
           if (person.naturalPerson) {
-            expect(person.naturalPerson.name.length).toBeGreaterThan(0);
+            expect(person.naturalPerson.name.nameIdentifier.length).toBeGreaterThan(0);
           }
           if (person.legalPerson) {
-            expect(person.legalPerson.name.length).toBeGreaterThan(0);
+            expect(person.legalPerson.name.nameIdentifier.length).toBeGreaterThan(0);
           }
         });
         
@@ -306,10 +308,10 @@ describe("IVMS101 Fast-Check Property-Based Tests", () => {
         // All persons should have at least one name
         [...ivms.originator.originatorPerson, ...ivms.beneficiary.beneficiaryPerson].forEach(person => {
           if (person.naturalPerson) {
-            expect(person.naturalPerson.name.length).toBeGreaterThan(0);
+            expect(person.naturalPerson.name.nameIdentifier.length).toBeGreaterThan(0);
           }
           if (person.legalPerson) {
-            expect(person.legalPerson.name.length).toBeGreaterThan(0);
+            expect(person.legalPerson.name.nameIdentifier.length).toBeGreaterThan(0);
           }
         });
         

@@ -104,7 +104,9 @@ export const legalEntityNationalIdentification = () => fc.record({
 }) as fc.Arbitrary<IVMS101_2020.NationalIdentification<IVMS101_2020.LegalEntityNationalIdentifierTypeCode>>;
 
 export const naturalPerson = () => fc.record({
-  name: fc.array(naturalPersonNameId(), { minLength: 1, maxLength: 3 }),
+  name: fc.record({
+    nameIdentifier: fc.array(naturalPersonNameId(), { minLength: 1, maxLength: 3 })
+  }),
   geographicAddress: fc.option(fc.array(address(), { minLength: 1, maxLength: 3 }), { nil: undefined }),
   nationalIdentification: fc.option(naturalPersonNationalIdentification(), { nil: undefined }),
   customerNumber: fc.option(identifier(), { nil: undefined }),
@@ -116,7 +118,9 @@ export const naturalPerson = () => fc.record({
 }) as fc.Arbitrary<IVMS101_2020.NaturalPerson>;
 
 export const legalPerson = () => fc.record({
-  name: fc.array(legalPersonNameId(), { minLength: 1, maxLength: 3 }),
+  name: fc.record({
+    nameIdentifier: fc.array(legalPersonNameId(), { minLength: 1, maxLength: 3 })
+  }),
   geographicAddress: fc.option(fc.array(address(), { minLength: 1, maxLength: 3 }), { nil: undefined }),
   customerNumber: fc.option(identifier(), { nil: undefined }),
   nationalIdentification: fc.option(legalEntityNationalIdentification(), { nil: undefined }),
@@ -167,7 +171,9 @@ export const naturalPersonNameId2023 = () => fc.record({
 }) as fc.Arbitrary<IVMS101_2023.NaturalPersonNameId>;
 
 export const naturalPerson2023 = () => fc.record({
-  name: fc.array(naturalPersonNameId2023(), { minLength: 1, maxLength: 3 }),
+  name: fc.record({
+    nameIdentifier: fc.array(naturalPersonNameId2023(), { minLength: 1, maxLength: 3 })
+  }),
   geographicAddress: fc.option(fc.array(address(), { minLength: 1, maxLength: 3 }), { nil: undefined }),
   nationalIdentification: fc.option(naturalPersonNationalIdentification(), { nil: undefined }),
   customerIdentification: fc.option(identifier(), { nil: undefined }),
@@ -179,7 +185,9 @@ export const naturalPerson2023 = () => fc.record({
 }) as fc.Arbitrary<IVMS101_2023.NaturalPerson>;
 
 export const legalPerson2023 = () => fc.record({
-  name: fc.array(legalPersonNameId(), { minLength: 1, maxLength: 3 }),
+  name: fc.record({
+    nameIdentifier: fc.array(legalPersonNameId(), { minLength: 1, maxLength: 3 })
+  }),
   geographicAddress: fc.option(fc.array(address(), { minLength: 1, maxLength: 3 }), { nil: undefined }),
   customerIdentification: fc.option(identifier(), { nil: undefined }),
   nationalIdentification: fc.option(legalEntityNationalIdentification(), { nil: undefined }),

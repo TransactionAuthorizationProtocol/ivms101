@@ -690,8 +690,8 @@ describe("IVMS101 Validator", () => {
     it("should validate generated person structures individually", () => {
       fc.assert(fc.property(arb.naturalPerson(), (person) => {
         // Natural person should have valid structure
-        expect(person.name.length).toBeGreaterThan(0);
-        person.name.forEach(nameId => {
+        expect(person.name.nameIdentifier.length).toBeGreaterThan(0);
+        person.name.nameIdentifier.forEach(nameId => {
           expect(nameId.primaryIdentifier.trim().length).toBeGreaterThan(0);
           expect(["ALIA", "BIRT", "MAID", "LEGL", "MISC"]).toContain(nameId.nameIdentifierType);
         });
@@ -699,8 +699,8 @@ describe("IVMS101 Validator", () => {
 
       fc.assert(fc.property(arb.legalPerson(), (person) => {
         // Legal person should have valid structure
-        expect(person.name.length).toBeGreaterThan(0);
-        person.name.forEach(nameId => {
+        expect(person.name.nameIdentifier.length).toBeGreaterThan(0);
+        person.name.nameIdentifier.forEach(nameId => {
           expect(nameId.legalPersonName.trim().length).toBeGreaterThan(0);
           expect(["LEGL", "SHRT", "TRAD"]).toContain(nameId.legalPersonNameIdentifierType);
         });

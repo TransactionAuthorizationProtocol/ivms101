@@ -314,7 +314,7 @@ const CountryCodeSchema = z.enum([
   "ZW",
 ]);
 
-const PayloadVersionCodeSchema = z.enum(["101", "101.2023"]);
+const PayloadVersionCodeSchema = z.nativeEnum(IVMS101_2023.PayloadVersionCode);
 
 // Shared schemas
 const AddressSchema = z.object({
