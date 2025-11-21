@@ -363,9 +363,9 @@ const LegalPersonNameIdSchema = z.object({
 
 const NaturalPerson2020Schema = z.object({
   name: z.object({
-    nameIdentifier: z.array(NaturalPersonNameId2020Schema),
+    nameIdentifier: z.array(NaturalPersonNameId2020Schema).min(1).max(5),
   }),
-  geographicAddress: z.array(AddressSchema).optional(),
+  geographicAddress: z.array(AddressSchema).max(5).optional(),
   nationalIdentification: NaturalPersonNationalIdentificationSchema.optional(),
   customerNumber: z.string().optional(),
   dateAndPlaceOfBirth: z
@@ -379,9 +379,9 @@ const NaturalPerson2020Schema = z.object({
 
 const LegalPerson2020Schema = z.object({
   name: z.object({
-    nameIdentifier: z.array(LegalPersonNameIdSchema),
+    nameIdentifier: z.array(LegalPersonNameIdSchema).min(1).max(3),
   }),
-  geographicAddress: z.array(AddressSchema).optional(),
+  geographicAddress: z.array(AddressSchema).max(5).optional(),
   customerNumber: z.string().optional(),
   nationalIdentification: LegalEntityNationalIdentificationSchema.optional(),
   countryOfRegistration: CountryCodeSchema.optional(),
@@ -393,13 +393,13 @@ const Person2020Schema = z.object({
 });
 
 const Originator2020Schema = z.object({
-  originatorPersons: z.array(Person2020Schema).min(1),
-  accountNumber: z.array(z.string()).optional(),
+  originatorPersons: z.array(Person2020Schema).min(1).max(10),
+  accountNumber: z.array(z.string()).max(20).optional(),
 });
 
 const Beneficiary2020Schema = z.object({
-  beneficiaryPersons: z.array(Person2020Schema).min(1),
-  accountNumber: z.array(z.string()).optional(),
+  beneficiaryPersons: z.array(Person2020Schema).min(1).max(10),
+  accountNumber: z.array(z.string()).max(20).optional(),
 });
 
 const TransferPath2020Schema = z.object({
@@ -408,11 +408,11 @@ const TransferPath2020Schema = z.object({
       intermediaryVASP: Person2020Schema,
       sequence: z.number(),
     }),
-  ),
+  ).max(5),
 });
 
 const PayloadMetadata2020Schema = z.object({
-  transliterationMethod: z.array(TransliterationMethodCodeSchema).optional(),
+  transliterationMethod: z.array(TransliterationMethodCodeSchema).max(5).optional(),
 });
 
 export const IVMS101_2020Schema = z.object({
@@ -433,9 +433,9 @@ const NaturalPersonNameId2023Schema = z.object({
 
 const NaturalPerson2023Schema = z.object({
   name: z.object({
-    nameIdentifier: z.array(NaturalPersonNameId2023Schema),
+    nameIdentifier: z.array(NaturalPersonNameId2023Schema).min(1).max(5),
   }),
-  geographicAddress: z.array(AddressSchema).optional(),
+  geographicAddress: z.array(AddressSchema).max(5).optional(),
   nationalIdentification: NaturalPersonNationalIdentificationSchema.optional(),
   customerIdentification: z.string().optional(),
   dateAndPlaceOfBirth: z
@@ -449,9 +449,9 @@ const NaturalPerson2023Schema = z.object({
 
 const LegalPerson2023Schema = z.object({
   name: z.object({
-    nameIdentifier: z.array(LegalPersonNameIdSchema),
+    nameIdentifier: z.array(LegalPersonNameIdSchema).min(1).max(3),
   }),
-  geographicAddress: z.array(AddressSchema).optional(),
+  geographicAddress: z.array(AddressSchema).max(5).optional(),
   customerIdentification: z.string().optional(),
   nationalIdentification: LegalEntityNationalIdentificationSchema.optional(),
   countryOfRegistration: CountryCodeSchema.optional(),
@@ -463,13 +463,13 @@ const Person2023Schema = z.object({
 });
 
 const Originator2023Schema = z.object({
-  originatorPerson: z.array(Person2023Schema).min(1),
-  accountNumber: z.array(z.string()).optional(),
+  originatorPerson: z.array(Person2023Schema).min(1).max(10),
+  accountNumber: z.array(z.string()).max(20).optional(),
 });
 
 const Beneficiary2023Schema = z.object({
-  beneficiaryPerson: z.array(Person2023Schema).min(1),
-  accountNumber: z.array(z.string()).optional(),
+  beneficiaryPerson: z.array(Person2023Schema).min(1).max(10),
+  accountNumber: z.array(z.string()).max(20).optional(),
 });
 
 const TransferPath2023Schema = z.object({
@@ -478,11 +478,11 @@ const TransferPath2023Schema = z.object({
       intermediaryVASP: Person2023Schema,
       sequence: z.number(),
     }),
-  ),
+  ).max(5),
 });
 
 const PayloadMetadata2023Schema = z.object({
-  transliterationMethod: z.array(TransliterationMethodCodeSchema).optional(),
+  transliterationMethod: z.array(TransliterationMethodCodeSchema).max(5).optional(),
   payloadVersion: PayloadVersionCodeSchema,
 });
 

@@ -105,9 +105,9 @@ export const legalEntityNationalIdentification = () => fc.record({
 
 export const naturalPerson = () => fc.record({
   name: fc.record({
-    nameIdentifier: fc.array(naturalPersonNameId(), { minLength: 1, maxLength: 3 })
+    nameIdentifier: fc.array(naturalPersonNameId(), { minLength: 1, maxLength: 5 })
   }),
-  geographicAddress: fc.option(fc.array(address(), { minLength: 1, maxLength: 3 }), { nil: undefined }),
+  geographicAddress: fc.option(fc.array(address(), { minLength: 1, maxLength: 5 }), { nil: undefined }),
   nationalIdentification: fc.option(naturalPersonNationalIdentification(), { nil: undefined }),
   customerNumber: fc.option(identifier(), { nil: undefined }),
   dateAndPlaceOfBirth: fc.option(fc.record({
@@ -121,7 +121,7 @@ export const legalPerson = () => fc.record({
   name: fc.record({
     nameIdentifier: fc.array(legalPersonNameId(), { minLength: 1, maxLength: 3 })
   }),
-  geographicAddress: fc.option(fc.array(address(), { minLength: 1, maxLength: 3 }), { nil: undefined }),
+  geographicAddress: fc.option(fc.array(address(), { minLength: 1, maxLength: 5 }), { nil: undefined }),
   customerNumber: fc.option(identifier(), { nil: undefined }),
   nationalIdentification: fc.option(legalEntityNationalIdentification(), { nil: undefined }),
   countryOfRegistration: fc.option(countryCode(), { nil: undefined })
@@ -133,13 +133,13 @@ export const person = () => fc.oneof(
 ) as fc.Arbitrary<IVMS101_2020.Person>;
 
 export const originator = () => fc.record({
-  originatorPersons: fc.array(person(), { minLength: 1, maxLength: 3 }),
-  accountNumber: fc.option(fc.array(identifier(), { minLength: 1, maxLength: 3 }), { nil: undefined })
+  originatorPersons: fc.array(person(), { minLength: 1, maxLength: 10 }),
+  accountNumber: fc.option(fc.array(identifier(), { minLength: 1, maxLength: 20 }), { nil: undefined })
 }) as fc.Arbitrary<IVMS101_2020.Originator>;
 
 export const beneficiary = () => fc.record({
-  beneficiaryPersons: fc.array(person(), { minLength: 1, maxLength: 3 }),
-  accountNumber: fc.option(fc.array(identifier(), { minLength: 1, maxLength: 3 }), { nil: undefined })
+  beneficiaryPersons: fc.array(person(), { minLength: 1, maxLength: 10 }),
+  accountNumber: fc.option(fc.array(identifier(), { minLength: 1, maxLength: 20 }), { nil: undefined })
 }) as fc.Arbitrary<IVMS101_2020.Beneficiary>;
 
 export const transferPath = () => fc.option(fc.record({
@@ -150,7 +150,7 @@ export const transferPath = () => fc.option(fc.record({
 }), { nil: undefined });
 
 export const payloadMetadata = () => fc.option(fc.record({
-  transliterationMethod: fc.option(fc.array(transliterationMethodCode(), { minLength: 1, maxLength: 3 }), { nil: undefined })
+  transliterationMethod: fc.option(fc.array(transliterationMethodCode(), { minLength: 1, maxLength: 5 }), { nil: undefined })
 }), { nil: undefined });
 
 export const ivms101_2020 = () => fc.record({
@@ -172,9 +172,9 @@ export const naturalPersonNameId2023 = () => fc.record({
 
 export const naturalPerson2023 = () => fc.record({
   name: fc.record({
-    nameIdentifier: fc.array(naturalPersonNameId2023(), { minLength: 1, maxLength: 3 })
+    nameIdentifier: fc.array(naturalPersonNameId2023(), { minLength: 1, maxLength: 5 })
   }),
-  geographicAddress: fc.option(fc.array(address(), { minLength: 1, maxLength: 3 }), { nil: undefined }),
+  geographicAddress: fc.option(fc.array(address(), { minLength: 1, maxLength: 5 }), { nil: undefined }),
   nationalIdentification: fc.option(naturalPersonNationalIdentification(), { nil: undefined }),
   customerIdentification: fc.option(identifier(), { nil: undefined }),
   dateAndPlaceOfBirth: fc.option(fc.record({
@@ -188,7 +188,7 @@ export const legalPerson2023 = () => fc.record({
   name: fc.record({
     nameIdentifier: fc.array(legalPersonNameId(), { minLength: 1, maxLength: 3 })
   }),
-  geographicAddress: fc.option(fc.array(address(), { minLength: 1, maxLength: 3 }), { nil: undefined }),
+  geographicAddress: fc.option(fc.array(address(), { minLength: 1, maxLength: 5 }), { nil: undefined }),
   customerIdentification: fc.option(identifier(), { nil: undefined }),
   nationalIdentification: fc.option(legalEntityNationalIdentification(), { nil: undefined }),
   countryOfRegistration: fc.option(countryCode(), { nil: undefined })
@@ -200,13 +200,13 @@ export const person2023 = () => fc.oneof(
 ) as fc.Arbitrary<IVMS101_2023.Person>;
 
 export const originator2023 = () => fc.record({
-  originatorPerson: fc.array(person2023(), { minLength: 1, maxLength: 3 }),
-  accountNumber: fc.option(fc.array(identifier(), { minLength: 1, maxLength: 3 }), { nil: undefined })
+  originatorPerson: fc.array(person2023(), { minLength: 1, maxLength: 10 }),
+  accountNumber: fc.option(fc.array(identifier(), { minLength: 1, maxLength: 20 }), { nil: undefined })
 }) as fc.Arbitrary<IVMS101_2023.Originator>;
 
 export const beneficiary2023 = () => fc.record({
-  beneficiaryPerson: fc.array(person2023(), { minLength: 1, maxLength: 3 }),
-  accountNumber: fc.option(fc.array(identifier(), { minLength: 1, maxLength: 3 }), { nil: undefined })
+  beneficiaryPerson: fc.array(person2023(), { minLength: 1, maxLength: 10 }),
+  accountNumber: fc.option(fc.array(identifier(), { minLength: 1, maxLength: 20 }), { nil: undefined })
 }) as fc.Arbitrary<IVMS101_2023.Beneficiary>;
 
 export const transferPath2023 = () => fc.option(fc.record({
@@ -218,7 +218,7 @@ export const transferPath2023 = () => fc.option(fc.record({
 
 // For 2023, we need to ensure payloadMetadata always has the correct payloadVersion when present
 export const payloadMetadata2023 = () => fc.option(fc.record({
-  transliterationMethod: fc.option(fc.array(transliterationMethodCode(), { minLength: 1, maxLength: 3 }), { nil: undefined }),
+  transliterationMethod: fc.option(fc.array(transliterationMethodCode(), { minLength: 1, maxLength: 5 }), { nil: undefined }),
   payloadVersion: fc.constant(IVMS101_2023.PayloadVersionCode.V2023)
 }), { nil: undefined });
 

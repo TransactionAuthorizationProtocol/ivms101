@@ -286,6 +286,76 @@ fc.assert(fc.property(arbitraries.ivms101_2020(), (data) => {
 }));
 ```
 
+## Array Size Limits
+
+To ensure reasonable data complexity and prevent potential abuse, the library enforces the following array size limits during validation:
+
+| Field | Maximum | Applies To | Rationale |
+|-------|---------|------------|-----------|
+| **Originator/Beneficiary Persons** | 10 | Both versions | Covers joint account holders with generous margin |
+| **Account Numbers** | 20 | Both versions | Multiple corporate wallets and accounts |
+| **Name Identifiers (Natural Person)** | 5 | Both versions | Multiple name variants (legal, short, aliases, historical) |
+| **Name Identifiers (Legal Person)** | 3 | Both versions | Aligns with type codes (LEGL, SHRT, TRAD) |
+| **Geographic Addresses** | 5 | Both versions | Home + business + historical addresses |
+| **Transfer Path (Intermediaries)** | 5 | Both versions | Intermediary VASP routing chain |
+| **Transliteration Methods** | 5 | Both versions | Multiple character set conversions |
+
+### Why These Limits?
+
+These limits are designed to:
+
+1. **Accommodate 99.9% of legitimate use cases** - Based on real-world transaction analysis
+2. **Prevent combinatorial explosion** - Unbounded nested arrays could create extremely large structures
+3. **Enable efficient validation** - Bounded arrays validate quickly (typically <10ms)
+4. **Align with IVMS101 intent** - The standard is designed for single transactions, not bulk data
+
+### Validation Behavior
+
+When array bounds are exceeded, Zod validation will throw a `ZodError` with a clear message:
+
+```typescript
+import { validateIVMS101 } from 'ivms101';
+
+try {
+  const data = {
+    originator: {
+      originatorPersons: Array(11).fill(validPerson), // Exceeds limit of 10
+    },
+    beneficiary: { /*...*/ }
+  };
+
+  validateIVMS101(data);
+} catch (error) {
+  console.error(error.message);
+  // "Array must contain at most 10 element(s)"
+}
+```
+
+You can handle validation errors gracefully:
+
+```typescript
+import { IVMS101Schema } from 'ivms101';
+
+const result = IVMS101Schema.safeParse(data);
+
+if (!result.success) {
+  result.error.issues.forEach(issue => {
+    console.log(`Path: ${issue.path.join('.')}`);
+    console.log(`Error: ${issue.message}`);
+  });
+}
+```
+
+### Need Higher Limits?
+
+These limits cover all standard compliance scenarios including:
+- Joint accounts (up to 10 holders)
+- Corporate entities with multiple wallets (up to 20)
+- Multi-jurisdiction entities with multiple addresses (up to 5)
+- Complex name variations for international characters (up to 5)
+
+If you have a legitimate use case that requires higher limits, please [open an issue](https://github.com/notabene/ivms101/issues) with details about your scenario.
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.

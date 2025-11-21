@@ -123,11 +123,24 @@ export interface NationalIdentification<C> {
   registrationAuthority?: string;
 }
 
-/** Represents a natural person */
+/**
+ * Represents a natural person
+ *
+ * **Array Bounds:**
+ * - `name.nameIdentifier`: min 1, max 5 (covers multiple name variants: legal, short, aliases)
+ * - `geographicAddress`: max 5 (covers home + business + historical addresses)
+ */
 export interface NaturalPerson {
-  /** The distinct words used as identification for an individual */
+  /**
+   * The distinct words used as identification for an individual
+   * @minItems nameIdentifier 1
+   * @maxItems nameIdentifier 5
+   */
   name: { nameIdentifier: NaturalPersonNameId[] };
-  /** The particulars of a location at which a person may be communicated with */
+  /**
+   * The particulars of a location at which a person may be communicated with
+   * @maxItems 5
+   */
   geographicAddress?: Address[];
   /** A distinct identifier used by governments to uniquely identify a person */
   nationalIdentification?: NationalIdentification<NaturalPersonNationalIdentifierTypeCode>;
@@ -142,11 +155,24 @@ export interface NaturalPerson {
   countryOfResidence?: CountryCode;
 }
 
-/** Represents a legal person */
+/**
+ * Represents a legal person
+ *
+ * **Array Bounds:**
+ * - `name.nameIdentifier`: min 1, max 3 (aligns with LegalPersonNameTypeCode: LEGL, SHRT, TRAD)
+ * - `geographicAddress`: max 5 (covers registered + principal + branch addresses)
+ */
 export interface LegalPerson {
-  /** The name of the legal person */
+  /**
+   * The name of the legal person
+   * @minItems nameIdentifier 1
+   * @maxItems nameIdentifier 3
+   */
   name: { nameIdentifier: LegalPersonNameId[] };
-  /** The address of the legal person */
+  /**
+   * The address of the legal person
+   * @maxItems 5
+   */
   geographicAddress?: Address[];
   /** A distinct identifier that uniquely identifies the person to the institution */
   customerNumber?: string;
@@ -162,34 +188,74 @@ export interface Person {
   legalPerson?: LegalPerson;
 }
 
-/** Represents the originator of a transfer */
+/**
+ * Represents the originator of a transfer
+ *
+ * **Array Bounds:**
+ * - `originatorPersons`: min 1, max 10 (covers joint accounts + margin)
+ * - `accountNumber`: max 20 (multiple wallets/accounts per entity)
+ */
 export interface Originator {
-  /** The account holder who allows the VA transfer */
+  /**
+   * The account holder who allows the VA transfer
+   * @minItems 1
+   * @maxItems 10
+   */
   originatorPersons: Person[];
-  /** Identifier of an account that is used to process the transaction */
+  /**
+   * Identifier of an account that is used to process the transaction
+   * @maxItems 20
+   */
   accountNumber?: string[];
 }
 
-/** Represents the beneficiary of a transfer */
+/**
+ * Represents the beneficiary of a transfer
+ *
+ * **Array Bounds:**
+ * - `beneficiaryPersons`: min 1, max 10 (same as originator)
+ * - `accountNumber`: max 20 (same as originator)
+ */
 export interface Beneficiary {
-  /** The person identified as the receiver of the requested VA transfer */
+  /**
+   * The person identified as the receiver of the requested VA transfer
+   * @minItems 1
+   * @maxItems 10
+   */
   beneficiaryPersons: Person[];
-  /** Identifier of an account that is used to process the transaction */
+  /**
+   * Identifier of an account that is used to process the transaction
+   * @maxItems 20
+   */
   accountNumber?: string[];
 }
 
-/** Represents the complete IVMS101 data structure */
+/**
+ * Represents the complete IVMS101 data structure
+ *
+ * **Array Bounds:**
+ * - `transferPath.transferPath`: max 5 (intermediary VASP chain limit)
+ * - `payloadMetadata.transliterationMethod`: max 5 (multiple character set conversions)
+ */
 export interface IVMS101 {
   originator: Originator;
   beneficiary: Beneficiary;
   originatingVASP?: Person;
   beneficiaryVASP?: Person;
+  /**
+   * Transfer path through intermediary VASPs
+   * @maxItems transferPath 5
+   */
   transferPath?: {
     transferPath: {
       intermediaryVASP: Person;
       sequence: number;
     }[];
   };
+  /**
+   * Payload metadata
+   * @maxItems transliterationMethod 5
+   */
   payloadMetadata?: {
     transliterationMethod?: TransliterationMethodCode[];
   };

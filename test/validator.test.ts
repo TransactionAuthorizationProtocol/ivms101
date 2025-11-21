@@ -729,4 +729,480 @@ describe("IVMS101 Validator", () => {
       }));
     });
   });
+
+  describe("Array Bounds Validation", () => {
+    // Helper to create minimal valid structures
+    const createValidNameId = (): IVMS101_2020.NaturalPersonNameId => ({
+      primaryIdentifier: "Doe",
+      secondaryIdentifier: "John",
+      nameIdentifierType: "LEGL",
+    });
+
+    const createValidAddress = (): IVMS101_2020.Address => ({
+      addressType: "HOME",
+      townName: "City",
+      country: "US",
+    });
+
+    const createValidPerson = (): IVMS101_2020.Person => ({
+      naturalPerson: {
+        name: { nameIdentifier: [createValidNameId()] },
+      },
+    });
+
+    const createValidIVMS101 = (overrides?: Partial<IVMS101_2020.IVMS101>): IVMS101_2020.IVMS101 => ({
+      originator: {
+        originatorPersons: [createValidPerson()],
+      },
+      beneficiary: {
+        beneficiaryPersons: [createValidPerson()],
+      },
+      ...overrides,
+    });
+
+    describe("IVMS101 2020 - Originator/Beneficiary Persons", () => {
+      it("should accept exactly 10 originator persons", () => {
+        const data = createValidIVMS101({
+          originator: {
+            originatorPersons: Array(10).fill(null).map(() => createValidPerson()),
+          },
+        });
+        expect(() => IVMS101_2020Schema.parse(data)).not.toThrow();
+      });
+
+      it("should reject 11 originator persons", () => {
+        const data = createValidIVMS101({
+          originator: {
+            originatorPersons: Array(11).fill(null).map(() => createValidPerson()),
+          },
+        });
+        expect(() => IVMS101_2020Schema.parse(data)).toThrow(/Too big.*10/);
+      });
+
+      it("should accept exactly 10 beneficiary persons", () => {
+        const data = createValidIVMS101({
+          beneficiary: {
+            beneficiaryPersons: Array(10).fill(null).map(() => createValidPerson()),
+          },
+        });
+        expect(() => IVMS101_2020Schema.parse(data)).not.toThrow();
+      });
+
+      it("should reject 11 beneficiary persons", () => {
+        const data = createValidIVMS101({
+          beneficiary: {
+            beneficiaryPersons: Array(11).fill(null).map(() => createValidPerson()),
+          },
+        });
+        expect(() => IVMS101_2020Schema.parse(data)).toThrow(/Too big.*10/);
+      });
+    });
+
+    describe("IVMS101 2020 - Account Numbers", () => {
+      it("should accept exactly 20 originator account numbers", () => {
+        const data = createValidIVMS101({
+          originator: {
+            originatorPersons: [createValidPerson()],
+            accountNumber: Array(20).fill("0x123"),
+          },
+        });
+        expect(() => IVMS101_2020Schema.parse(data)).not.toThrow();
+      });
+
+      it("should reject 21 originator account numbers", () => {
+        const data = createValidIVMS101({
+          originator: {
+            originatorPersons: [createValidPerson()],
+            accountNumber: Array(21).fill("0x123"),
+          },
+        });
+        expect(() => IVMS101_2020Schema.parse(data)).toThrow(/Too big.*20/);
+      });
+
+      it("should accept exactly 20 beneficiary account numbers", () => {
+        const data = createValidIVMS101({
+          beneficiary: {
+            beneficiaryPersons: [createValidPerson()],
+            accountNumber: Array(20).fill("0x456"),
+          },
+        });
+        expect(() => IVMS101_2020Schema.parse(data)).not.toThrow();
+      });
+
+      it("should reject 21 beneficiary account numbers", () => {
+        const data = createValidIVMS101({
+          beneficiary: {
+            beneficiaryPersons: [createValidPerson()],
+            accountNumber: Array(21).fill("0x456"),
+          },
+        });
+        expect(() => IVMS101_2020Schema.parse(data)).toThrow(/Too big.*20/);
+      });
+    });
+
+    describe("IVMS101 2020 - Natural Person Name Identifiers", () => {
+      it("should accept exactly 5 name identifiers", () => {
+        const data = createValidIVMS101({
+          originator: {
+            originatorPersons: [{
+              naturalPerson: {
+                name: {
+                  nameIdentifier: Array(5).fill(null).map(() => createValidNameId()),
+                },
+              },
+            }],
+          },
+        });
+        expect(() => IVMS101_2020Schema.parse(data)).not.toThrow();
+      });
+
+      it("should reject 6 name identifiers", () => {
+        const data = createValidIVMS101({
+          originator: {
+            originatorPersons: [{
+              naturalPerson: {
+                name: {
+                  nameIdentifier: Array(6).fill(null).map(() => createValidNameId()),
+                },
+              },
+            }],
+          },
+        });
+        expect(() => IVMS101_2020Schema.parse(data)).toThrow(/Too big.*5/);
+      });
+
+      it("should require at least 1 name identifier", () => {
+        const data = createValidIVMS101({
+          originator: {
+            originatorPersons: [{
+              naturalPerson: {
+                name: {
+                  nameIdentifier: [],
+                },
+              },
+            }],
+          },
+        });
+        expect(() => IVMS101_2020Schema.parse(data)).toThrow(/Too small.*1/);
+      });
+    });
+
+    describe("IVMS101 2020 - Legal Person Name Identifiers", () => {
+      const createValidLegalNameId = (): IVMS101_2020.LegalPersonNameId => ({
+        legalPersonName: "Acme Corp",
+        legalPersonNameIdentifierType: "LEGL",
+      });
+
+      it("should accept exactly 3 legal person name identifiers", () => {
+        const data = createValidIVMS101({
+          originator: {
+            originatorPersons: [{
+              legalPerson: {
+                name: {
+                  nameIdentifier: Array(3).fill(null).map(() => createValidLegalNameId()),
+                },
+              },
+            }],
+          },
+        });
+        expect(() => IVMS101_2020Schema.parse(data)).not.toThrow();
+      });
+
+      it("should reject 4 legal person name identifiers", () => {
+        const data = createValidIVMS101({
+          originator: {
+            originatorPersons: [{
+              legalPerson: {
+                name: {
+                  nameIdentifier: Array(4).fill(null).map(() => createValidLegalNameId()),
+                },
+              },
+            }],
+          },
+        });
+        expect(() => IVMS101_2020Schema.parse(data)).toThrow(/Too big.*3/);
+      });
+    });
+
+    describe("IVMS101 2020 - Geographic Addresses", () => {
+      it("should accept exactly 5 addresses for natural person", () => {
+        const data = createValidIVMS101({
+          originator: {
+            originatorPersons: [{
+              naturalPerson: {
+                name: { nameIdentifier: [createValidNameId()] },
+                geographicAddress: Array(5).fill(null).map(() => createValidAddress()),
+              },
+            }],
+          },
+        });
+        expect(() => IVMS101_2020Schema.parse(data)).not.toThrow();
+      });
+
+      it("should reject 6 addresses for natural person", () => {
+        const data = createValidIVMS101({
+          originator: {
+            originatorPersons: [{
+              naturalPerson: {
+                name: { nameIdentifier: [createValidNameId()] },
+                geographicAddress: Array(6).fill(null).map(() => createValidAddress()),
+              },
+            }],
+          },
+        });
+        expect(() => IVMS101_2020Schema.parse(data)).toThrow(/Too big.*5/);
+      });
+
+      it("should accept exactly 5 addresses for legal person", () => {
+        const data = createValidIVMS101({
+          originator: {
+            originatorPersons: [{
+              legalPerson: {
+                name: {
+                  nameIdentifier: [{
+                    legalPersonName: "Acme Corp",
+                    legalPersonNameIdentifierType: "LEGL",
+                  }],
+                },
+                geographicAddress: Array(5).fill(null).map(() => createValidAddress()),
+              },
+            }],
+          },
+        });
+        expect(() => IVMS101_2020Schema.parse(data)).not.toThrow();
+      });
+
+      it("should reject 6 addresses for legal person", () => {
+        const data = createValidIVMS101({
+          originator: {
+            originatorPersons: [{
+              legalPerson: {
+                name: {
+                  nameIdentifier: [{
+                    legalPersonName: "Acme Corp",
+                    legalPersonNameIdentifierType: "LEGL",
+                  }],
+                },
+                geographicAddress: Array(6).fill(null).map(() => createValidAddress()),
+              },
+            }],
+          },
+        });
+        expect(() => IVMS101_2020Schema.parse(data)).toThrow(/Too big.*5/);
+      });
+    });
+
+    describe("IVMS101 2020 - Transfer Path", () => {
+      it("should accept exactly 5 intermediary VASPs", () => {
+        const data = createValidIVMS101({
+          transferPath: {
+            transferPath: Array(5).fill(null).map((_, i) => ({
+              intermediaryVASP: createValidPerson(),
+              sequence: i + 1,
+            })),
+          },
+        });
+        expect(() => IVMS101_2020Schema.parse(data)).not.toThrow();
+      });
+
+      it("should reject 6 intermediary VASPs", () => {
+        const data = createValidIVMS101({
+          transferPath: {
+            transferPath: Array(6).fill(null).map((_, i) => ({
+              intermediaryVASP: createValidPerson(),
+              sequence: i + 1,
+            })),
+          },
+        });
+        expect(() => IVMS101_2020Schema.parse(data)).toThrow(/Too big.*5/);
+      });
+    });
+
+    describe("IVMS101 2020 - Transliteration Methods", () => {
+      it("should accept exactly 5 transliteration methods", () => {
+        const data = createValidIVMS101({
+          payloadMetadata: {
+            transliterationMethod: ["othr", "arab", "aran", "armn", "cyrl"],
+          },
+        });
+        expect(() => IVMS101_2020Schema.parse(data)).not.toThrow();
+      });
+
+      it("should reject 6 transliteration methods", () => {
+        const data = createValidIVMS101({
+          payloadMetadata: {
+            transliterationMethod: ["othr", "arab", "aran", "armn", "cyrl", "geor"],
+          },
+        });
+        expect(() => IVMS101_2020Schema.parse(data)).toThrow(/Too big.*5/);
+      });
+    });
+
+    describe("IVMS101 2023 - Array Bounds", () => {
+      const createValid2023NameId = (): IVMS101_2023.NaturalPersonNameId => ({
+        primaryIdentifier: "Doe",
+        secondaryIdentifier: "John",
+        naturalPersonNameIdentifierType: "LEGL",
+      });
+
+      const createValid2023Person = (): IVMS101_2023.Person => ({
+        naturalPerson: {
+          name: { nameIdentifier: [createValid2023NameId()] },
+        },
+      });
+
+      const createValid2023IVMS101 = (overrides?: Partial<IVMS101_2023.IVMS101>): IVMS101_2023.IVMS101 => ({
+        originator: {
+          originatorPerson: [createValid2023Person()],
+        },
+        beneficiary: {
+          beneficiaryPerson: [createValid2023Person()],
+        },
+        payloadMetadata: {
+          payloadVersion: IVMS101_2023.PayloadVersionCode.V2023,
+        },
+        ...overrides,
+      });
+
+      it("should accept exactly 10 originator persons", () => {
+        const data = createValid2023IVMS101({
+          originator: {
+            originatorPerson: Array(10).fill(null).map(() => createValid2023Person()),
+          },
+        });
+        expect(() => IVMS101_2023Schema.parse(data)).not.toThrow();
+      });
+
+      it("should reject 11 originator persons", () => {
+        const data = createValid2023IVMS101({
+          originator: {
+            originatorPerson: Array(11).fill(null).map(() => createValid2023Person()),
+          },
+        });
+        expect(() => IVMS101_2023Schema.parse(data)).toThrow(/Too big.*10/);
+      });
+
+      it("should accept exactly 20 account numbers", () => {
+        const data = createValid2023IVMS101({
+          originator: {
+            originatorPerson: [createValid2023Person()],
+            accountNumber: Array(20).fill("0x123"),
+          },
+        });
+        expect(() => IVMS101_2023Schema.parse(data)).not.toThrow();
+      });
+
+      it("should reject 21 account numbers", () => {
+        const data = createValid2023IVMS101({
+          originator: {
+            originatorPerson: [createValid2023Person()],
+            accountNumber: Array(21).fill("0x123"),
+          },
+        });
+        expect(() => IVMS101_2023Schema.parse(data)).toThrow(/Too big.*20/);
+      });
+
+      it("should accept exactly 5 name identifiers", () => {
+        const data = createValid2023IVMS101({
+          originator: {
+            originatorPerson: [{
+              naturalPerson: {
+                name: {
+                  nameIdentifier: Array(5).fill(null).map(() => createValid2023NameId()),
+                },
+              },
+            }],
+          },
+        });
+        expect(() => IVMS101_2023Schema.parse(data)).not.toThrow();
+      });
+
+      it("should reject 6 name identifiers", () => {
+        const data = createValid2023IVMS101({
+          originator: {
+            originatorPerson: [{
+              naturalPerson: {
+                name: {
+                  nameIdentifier: Array(6).fill(null).map(() => createValid2023NameId()),
+                },
+              },
+            }],
+          },
+        });
+        expect(() => IVMS101_2023Schema.parse(data)).toThrow(/Too big.*5/);
+      });
+
+      it("should accept exactly 5 geographic addresses", () => {
+        const data = createValid2023IVMS101({
+          originator: {
+            originatorPerson: [{
+              naturalPerson: {
+                name: { nameIdentifier: [createValid2023NameId()] },
+                geographicAddress: Array(5).fill(null).map(() => createValidAddress()),
+              },
+            }],
+          },
+        });
+        expect(() => IVMS101_2023Schema.parse(data)).not.toThrow();
+      });
+
+      it("should reject 6 geographic addresses", () => {
+        const data = createValid2023IVMS101({
+          originator: {
+            originatorPerson: [{
+              naturalPerson: {
+                name: { nameIdentifier: [createValid2023NameId()] },
+                geographicAddress: Array(6).fill(null).map(() => createValidAddress()),
+              },
+            }],
+          },
+        });
+        expect(() => IVMS101_2023Schema.parse(data)).toThrow(/Too big.*5/);
+      });
+
+      it("should accept exactly 5 intermediary VASPs in transfer path", () => {
+        const data = createValid2023IVMS101({
+          transferPath: {
+            transferPath: Array(5).fill(null).map((_, i) => ({
+              intermediaryVASP: createValid2023Person(),
+              sequence: i + 1,
+            })),
+          },
+        });
+        expect(() => IVMS101_2023Schema.parse(data)).not.toThrow();
+      });
+
+      it("should reject 6 intermediary VASPs in transfer path", () => {
+        const data = createValid2023IVMS101({
+          transferPath: {
+            transferPath: Array(6).fill(null).map((_, i) => ({
+              intermediaryVASP: createValid2023Person(),
+              sequence: i + 1,
+            })),
+          },
+        });
+        expect(() => IVMS101_2023Schema.parse(data)).toThrow(/Too big.*5/);
+      });
+
+      it("should accept exactly 5 transliteration methods", () => {
+        const data = createValid2023IVMS101({
+          payloadMetadata: {
+            transliterationMethod: ["othr", "arab", "aran", "armn", "cyrl"],
+            payloadVersion: IVMS101_2023.PayloadVersionCode.V2023,
+          },
+        });
+        expect(() => IVMS101_2023Schema.parse(data)).not.toThrow();
+      });
+
+      it("should reject 6 transliteration methods", () => {
+        const data = createValid2023IVMS101({
+          payloadMetadata: {
+            transliterationMethod: ["othr", "arab", "aran", "armn", "cyrl", "geor"],
+            payloadVersion: IVMS101_2023.PayloadVersionCode.V2023,
+          },
+        });
+        expect(() => IVMS101_2023Schema.parse(data)).toThrow(/Too big.*5/);
+      });
+    });
+  });
 });

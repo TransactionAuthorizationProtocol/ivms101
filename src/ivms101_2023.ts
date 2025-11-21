@@ -37,16 +37,32 @@ export type Address = V2020.Address;
 export type NationalIdentification =
   V2020.NationalIdentification<V2020.NationalIdentifierTypeCode>;
 
-/** Represents a natural person */
+/**
+ * Represents a natural person
+ *
+ * **Array Bounds:**
+ * - `name.nameIdentifier`: min 1, max 5 (same as 2020 version)
+ * - `geographicAddress`: max 5 (inherited from V2020.NaturalPerson)
+ */
 export interface NaturalPerson
   extends Omit<V2020.NaturalPerson, "name" | "customerNumber"> {
-  /** The distinct words used as identification for an individual */
+  /**
+   * The distinct words used as identification for an individual
+   * @minItems nameIdentifier 1
+   * @maxItems nameIdentifier 5
+   */
   name: { nameIdentifier: NaturalPersonNameId[] };
   /** A distinct identifier that uniquely identifies the person to the institution */
   customerIdentification?: string;
 }
 
-/** Represents a legal person */
+/**
+ * Represents a legal person
+ *
+ * **Array Bounds:**
+ * - `name.nameIdentifier`: min 1, max 3 (inherited from V2020.LegalPerson)
+ * - `geographicAddress`: max 5 (inherited from V2020.LegalPerson)
+ */
 export interface LegalPerson extends Omit<V2020.LegalPerson, "customerNumber"> {
   /** A distinct identifier that uniquely identifies the person to the institution */
   customerIdentification?: string;
@@ -58,34 +74,74 @@ export interface Person {
   legalPerson?: LegalPerson;
 }
 
-/** Represents the originator of a transfer */
+/**
+ * Represents the originator of a transfer
+ *
+ * **Array Bounds:**
+ * - `originatorPerson`: min 1, max 10 (covers joint accounts + margin)
+ * - `accountNumber`: max 20 (multiple wallets/accounts per entity)
+ */
 export interface Originator {
-  /** The account holder who allows the VA transfer */
+  /**
+   * The account holder who allows the VA transfer
+   * @minItems 1
+   * @maxItems 10
+   */
   originatorPerson: Person[];
-  /** Identifier of an account that is used to process the transaction */
+  /**
+   * Identifier of an account that is used to process the transaction
+   * @maxItems 20
+   */
   accountNumber?: string[];
 }
 
-/** Represents the beneficiary of a transfer */
+/**
+ * Represents the beneficiary of a transfer
+ *
+ * **Array Bounds:**
+ * - `beneficiaryPerson`: min 1, max 10 (same as originator)
+ * - `accountNumber`: max 20 (same as originator)
+ */
 export interface Beneficiary {
-  /** The person identified as the receiver of the requested VA transfer */
+  /**
+   * The person identified as the receiver of the requested VA transfer
+   * @minItems 1
+   * @maxItems 10
+   */
   beneficiaryPerson: Person[];
-  /** Identifier of an account that is used to process the transaction */
+  /**
+   * Identifier of an account that is used to process the transaction
+   * @maxItems 20
+   */
   accountNumber?: string[];
 }
 
-/** Represents the complete IVMS101.2023 data structure */
+/**
+ * Represents the complete IVMS101.2023 data structure
+ *
+ * **Array Bounds:**
+ * - `transferPath.transferPath`: max 5 (intermediary VASP chain limit)
+ * - `payloadMetadata.transliterationMethod`: max 5 (multiple character set conversions)
+ */
 export interface IVMS101 {
   originator: Originator;
   beneficiary: Beneficiary;
   originatingVASP?: Person;
   beneficiaryVASP?: Person;
+  /**
+   * Transfer path through intermediary VASPs
+   * @maxItems transferPath 5
+   */
   transferPath?: {
     transferPath: {
       intermediaryVASP: Person;
       sequence: number;
     }[];
   };
+  /**
+   * Payload metadata
+   * @maxItems transliterationMethod 5
+   */
   payloadMetadata?: {
     transliterationMethod?: TransliterationMethodCode[];
     payloadVersion: PayloadVersionCode;
