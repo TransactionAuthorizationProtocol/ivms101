@@ -3,9 +3,7 @@
  * This file contains type definitions for the IVMS101 standard.
  */
 
-import { CountryCode } from "./countries";
-
-export type { CountryCode } from "./countries";
+import type { CountryCode } from "./countries";
 
 /** Codes representing the nature of a natural person's name */
 export type NaturalPersonNameTypeCode =
