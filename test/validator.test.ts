@@ -69,7 +69,7 @@ describe("IVMS101 Validator", () => {
             customerNumber: "789012",
             geographicAddress: [
               {
-                addressType: "BIZZ",
+                addressType: "GEOG",
                 streetName: "Business Ave",
                 buildingNumber: "456",
                 townName: "Los Angeles",
@@ -77,9 +77,8 @@ describe("IVMS101 Validator", () => {
               },
             ],
             nationalIdentification: {
-              nationalIdentifier: "987654321",
+              nationalIdentifier: "5493001KJTIIGC8Y1R12",
               nationalIdentifierType: "LEIX",
-              countryOfIssue: "US",
             },
             countryOfRegistration: "US",
           },
@@ -129,7 +128,7 @@ describe("IVMS101 Validator", () => {
               customerNumber: "VASP003",
             },
           },
-          sequence: 1,
+          sequence: 0,
         },
       ],
     },
@@ -193,7 +192,7 @@ describe("IVMS101 Validator", () => {
             customerIdentification: "789012",
             geographicAddress: [
               {
-                addressType: "BIZZ",
+                addressType: "GEOG",
                 streetName: "Business Ave",
                 buildingNumber: "456",
                 townName: "Los Angeles",
@@ -201,9 +200,8 @@ describe("IVMS101 Validator", () => {
               },
             ],
             nationalIdentification: {
-              nationalIdentifier: "987654321",
+              nationalIdentifier: "5493001KJTIIGC8Y1R12",
               nationalIdentifierType: "LEIX",
-              countryOfIssue: "US",
             },
             countryOfRegistration: "US",
           },
@@ -253,7 +251,7 @@ describe("IVMS101 Validator", () => {
               customerIdentification: "VASP003",
             },
           },
-          sequence: 1,
+          sequence: 0,
         },
       ],
     },
@@ -325,6 +323,7 @@ describe("IVMS101 Validator", () => {
                     },
                   ],
                 },
+                customerNumber: "CUST001",
               },
             },
           ],
@@ -341,6 +340,7 @@ describe("IVMS101 Validator", () => {
                     },
                   ],
                 },
+                customerNumber: "CUST002",
               },
             },
           ],
@@ -388,6 +388,7 @@ describe("IVMS101 Validator", () => {
                     },
                   ],
                 },
+                customerIdentification: "CUST001",
               },
             },
           ],
@@ -404,9 +405,13 @@ describe("IVMS101 Validator", () => {
                     },
                   ],
                 },
+                customerIdentification: "CUST002",
               },
             },
           ],
+        },
+        payloadMetadata: {
+          payloadVersion: "101.2023",
         },
       };
       const result = IVMS101_2023Schema.safeParse(minimalData);
@@ -512,7 +517,7 @@ describe("IVMS101 Validator", () => {
                   {
                     addressType: "HOME",
                     townName: "Test City",
-                    country: "XX", // Invalid country code
+                    country: "ZZ", // Invalid country code
                   },
                 ],
               },
@@ -740,6 +745,8 @@ describe("IVMS101 Validator", () => {
 
     const createValidAddress = (): IVMS101_2020.Address => ({
       addressType: "HOME",
+      streetName: "Main St",
+      buildingNumber: "123",
       townName: "City",
       country: "US",
     });
@@ -747,6 +754,7 @@ describe("IVMS101 Validator", () => {
     const createValidPerson = (): IVMS101_2020.Person => ({
       naturalPerson: {
         name: { nameIdentifier: [createValidNameId()] },
+        customerNumber: "CUST001",
       },
     });
 
@@ -849,6 +857,7 @@ describe("IVMS101 Validator", () => {
                 name: {
                   nameIdentifier: Array(5).fill(null).map(() => createValidNameId()),
                 },
+                customerNumber: "CUST001",
               },
             }],
           },
@@ -901,6 +910,7 @@ describe("IVMS101 Validator", () => {
                 name: {
                   nameIdentifier: Array(3).fill(null).map(() => createValidLegalNameId()),
                 },
+                customerNumber: "CUST002",
               },
             }],
           },
@@ -964,7 +974,13 @@ describe("IVMS101 Validator", () => {
                     legalPersonNameIdentifierType: "LEGL",
                   }],
                 },
-                geographicAddress: Array(5).fill(null).map(() => createValidAddress()),
+                geographicAddress: Array(5).fill(null).map(() => ({
+                  addressType: "GEOG",
+                  streetName: "Business Ave",
+                  buildingNumber: "456",
+                  townName: "City",
+                  country: "US",
+                })),
               },
             }],
           },
@@ -998,7 +1014,7 @@ describe("IVMS101 Validator", () => {
           transferPath: {
             transferPath: Array(5).fill(null).map((_, i) => ({
               intermediaryVASP: createValidPerson(),
-              sequence: i + 1,
+              sequence: i,
             })),
           },
         });
@@ -1048,6 +1064,7 @@ describe("IVMS101 Validator", () => {
       const createValid2023Person = (): IVMS101_2023.Person => ({
         naturalPerson: {
           name: { nameIdentifier: [createValid2023NameId()] },
+          customerIdentification: "CUST001",
         },
       });
 
@@ -1110,6 +1127,7 @@ describe("IVMS101 Validator", () => {
                 name: {
                   nameIdentifier: Array(5).fill(null).map(() => createValid2023NameId()),
                 },
+                customerIdentification: "CUST001",
               },
             }],
           },
@@ -1165,7 +1183,7 @@ describe("IVMS101 Validator", () => {
           transferPath: {
             transferPath: Array(5).fill(null).map((_, i) => ({
               intermediaryVASP: createValid2023Person(),
-              sequence: i + 1,
+              sequence: i,
             })),
           },
         });

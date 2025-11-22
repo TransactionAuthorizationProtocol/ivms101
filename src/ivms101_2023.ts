@@ -1,20 +1,42 @@
 /**
  * IVMS101.2023 - interVASP Messaging Standard (2023 version)
  * This file contains type definitions for the IVMS101.2023 standard,
- * reusing types from IVMS101 where possible.
+ * reusing shared types from core.ts where possible.
  */
 
+import type { CountryCode } from "./countries";
+import type {
+  NaturalPersonNameTypeCode,
+  LegalPersonNameTypeCode,
+  AddressTypeCode,
+  NationalIdentifierTypeCode,
+  LegalEntityNationalIdentifierTypeCode,
+  NaturalPersonNationalIdentifierTypeCode,
+  TransliterationMethodCode,
+  LocalNaturalPersonNameId,
+  LocalLegalPersonNameId,
+  LegalPersonNameId,
+  Address,
+  NationalIdentification,
+} from "./core";
 import * as V2020 from "./ivms101_2020";
 
-// Reuse types that are the same in both versions
-export type NaturalPersonNameTypeCode = V2020.NaturalPersonNameTypeCode;
-export type LegalPersonNameTypeCode = V2020.LegalPersonNameTypeCode;
-export type AddressTypeCode = V2020.AddressTypeCode;
-export type NationalIdentifierTypeCode = V2020.NationalIdentifierTypeCode;
-export type TransliterationMethodCode = V2020.TransliterationMethodCode;
-export type CountryCode = V2020.CountryCode;
-export type LocalNaturalPersonNameId = V2020.LocalNaturalPersonNameId;
-export type LocalLegalPersonNameId = V2020.LocalLegalPersonNameId;
+// Re-export shared types for convenience
+export type {
+  NaturalPersonNameTypeCode,
+  LegalPersonNameTypeCode,
+  AddressTypeCode,
+  NationalIdentifierTypeCode,
+  LegalEntityNationalIdentifierTypeCode,
+  NaturalPersonNationalIdentifierTypeCode,
+  TransliterationMethodCode,
+  CountryCode,
+  LocalNaturalPersonNameId,
+  LocalLegalPersonNameId,
+  LegalPersonNameId,
+  Address,
+  NationalIdentification,
+};
 
 /** Codes identifying the version of IVMS 101 to which the payload complies */
 export enum PayloadVersionCode {
@@ -28,16 +50,6 @@ export interface NaturalPersonNameId
   /** The nature of the name specified */
   naturalPersonNameIdentifierType: NaturalPersonNameTypeCode;
 }
-
-// Reuse LegalPersonNameId as it's the same in both versions
-export type LegalPersonNameId = V2020.LegalPersonNameId;
-
-// Reuse Address as it's the same in both versions
-export type Address = V2020.Address;
-
-// Reuse NationalIdentification as it's the same in both versions
-export type NationalIdentification =
-  V2020.NationalIdentification<V2020.NationalIdentifierTypeCode>;
 
 /**
  * Represents a natural person
@@ -84,6 +96,8 @@ export interface LegalPerson extends Omit<V2020.LegalPerson, "customerNumber"> {
 export interface Person {
   naturalPerson?: NaturalPerson;
   legalPerson?: LegalPerson;
+  /** Identifier of an account that is used to process the transaction */
+  accountNumber?: string[];
 }
 
 /**
