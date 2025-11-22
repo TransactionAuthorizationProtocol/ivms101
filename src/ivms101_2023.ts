@@ -13,6 +13,8 @@ export type AddressTypeCode = V2020.AddressTypeCode;
 export type NationalIdentifierTypeCode = V2020.NationalIdentifierTypeCode;
 export type TransliterationMethodCode = V2020.TransliterationMethodCode;
 export type CountryCode = V2020.CountryCode;
+export type LocalNaturalPersonNameId = V2020.LocalNaturalPersonNameId;
+export type LocalLegalPersonNameId = V2020.LocalLegalPersonNameId;
 
 /** Codes identifying the version of IVMS 101 to which the payload complies */
 export enum PayloadVersionCode {
@@ -42,6 +44,8 @@ export type NationalIdentification =
  *
  * **Array Bounds:**
  * - `name.nameIdentifier`: min 1, max 5 (same as 2020 version)
+ * - `name.localNameIdentifier`: max 5 (same as nameIdentifier, for local script)
+ * - `name.phoneticNameIdentifier`: max 5 (same as nameIdentifier, for phonetic representation)
  * - `geographicAddress`: max 5 (inherited from V2020.NaturalPerson)
  */
 export interface NaturalPerson
@@ -50,8 +54,14 @@ export interface NaturalPerson
    * The distinct words used as identification for an individual
    * @minItems nameIdentifier 1
    * @maxItems nameIdentifier 5
+   * @maxItems localNameIdentifier 5
+   * @maxItems phoneticNameIdentifier 5
    */
-  name: { nameIdentifier: NaturalPersonNameId[] };
+  name: {
+    nameIdentifier: NaturalPersonNameId[];
+    localNameIdentifier?: LocalNaturalPersonNameId[];
+    phoneticNameIdentifier?: LocalNaturalPersonNameId[];
+  };
   /** A distinct identifier that uniquely identifies the person to the institution */
   customerIdentification?: string;
 }
@@ -61,6 +71,8 @@ export interface NaturalPerson
  *
  * **Array Bounds:**
  * - `name.nameIdentifier`: min 1, max 3 (inherited from V2020.LegalPerson)
+ * - `name.localNameIdentifier`: max 3 (same as nameIdentifier, for local script)
+ * - `name.phoneticNameIdentifier`: max 3 (same as nameIdentifier, for phonetic representation)
  * - `geographicAddress`: max 5 (inherited from V2020.LegalPerson)
  */
 export interface LegalPerson extends Omit<V2020.LegalPerson, "customerNumber"> {
@@ -79,7 +91,6 @@ export interface Person {
  *
  * **Array Bounds:**
  * - `originatorPerson`: min 1, max 10 (covers joint accounts + margin)
- * - `accountNumber`: max 20 (multiple wallets/accounts per entity)
  */
 export interface Originator {
   /**
@@ -88,11 +99,6 @@ export interface Originator {
    * @maxItems 10
    */
   originatorPerson: Person[];
-  /**
-   * Identifier of an account that is used to process the transaction
-   * @maxItems 20
-   */
-  accountNumber?: string[];
 }
 
 /**
@@ -100,7 +106,6 @@ export interface Originator {
  *
  * **Array Bounds:**
  * - `beneficiaryPerson`: min 1, max 10 (same as originator)
- * - `accountNumber`: max 20 (same as originator)
  */
 export interface Beneficiary {
   /**
@@ -109,11 +114,6 @@ export interface Beneficiary {
    * @maxItems 10
    */
   beneficiaryPerson: Person[];
-  /**
-   * Identifier of an account that is used to process the transaction
-   * @maxItems 20
-   */
-  accountNumber?: string[];
 }
 
 /**

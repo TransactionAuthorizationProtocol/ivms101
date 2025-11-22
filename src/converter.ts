@@ -37,11 +37,9 @@ export function convertTo2023(
   return {
     originator: {
       originatorPerson: data.originator.originatorPersons.map(convertPerson),
-      accountNumber: data.originator.accountNumber,
     },
     beneficiary: {
       beneficiaryPerson: data.beneficiary.beneficiaryPersons.map(convertPerson),
-      accountNumber: data.beneficiary.accountNumber,
     },
     originatingVASP: data.originatingVASP
       ? convertPerson(data.originatingVASP)
@@ -75,12 +73,10 @@ export function convertFrom2023(
     originator: {
       originatorPersons:
         data.originator.originatorPerson.map(convertPersonBack),
-      accountNumber: data.originator.accountNumber,
     },
     beneficiary: {
       beneficiaryPersons:
         data.beneficiary.beneficiaryPerson.map(convertPersonBack),
-      accountNumber: data.beneficiary.accountNumber,
     },
     originatingVASP: data.originatingVASP
       ? convertPersonBack(data.originatingVASP)
@@ -96,7 +92,7 @@ export function convertFrom2023(
           })),
         }
       : undefined,
-    payloadMetadata: data.payloadMetadata
+    payloadMetadata: data.payloadMetadata?.transliterationMethod
       ? {
           transliterationMethod: data.payloadMetadata.transliterationMethod,
         }
@@ -116,6 +112,7 @@ function convertPerson(person: IVMS101_2020.Person): IVMS101_2023.Person {
     legalPerson: person.legalPerson
       ? convertLegalPerson(person.legalPerson)
       : undefined,
+    accountNumber: person.accountNumber,
   };
 }
 
@@ -132,6 +129,7 @@ function convertPersonBack(person: IVMS101_2023.Person): IVMS101_2020.Person {
     legalPerson: person.legalPerson
       ? convertLegalPersonBack(person.legalPerson)
       : undefined,
+    accountNumber: person.accountNumber,
   };
 }
 
@@ -145,6 +143,8 @@ function convertNaturalPerson(
         ...n,
         naturalPersonNameIdentifierType: n.nameIdentifierType,
       })),
+      localNameIdentifier: np.name.localNameIdentifier,
+      phoneticNameIdentifier: np.name.phoneticNameIdentifier,
     },
     customerIdentification: np.customerNumber,
   };
@@ -164,6 +164,8 @@ function convertNaturalPersonBack(
           nameIdentifierType: naturalPersonNameIdentifierType,
         };
       }),
+      localNameIdentifier: np.name.localNameIdentifier,
+      phoneticNameIdentifier: np.name.phoneticNameIdentifier,
     },
     customerNumber: customerIdentification,
   };

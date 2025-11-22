@@ -83,9 +83,27 @@ export interface NaturalPersonNameId {
   nameIdentifierType: NaturalPersonNameTypeCode;
 }
 
+/** Represents a local natural person's name identifier (using local characters) */
+export interface LocalNaturalPersonNameId {
+  /** This may be the family name, maiden name, or married name using local characters */
+  primaryIdentifier: string;
+  /** These may be forenames, given names, initials, or other secondary names using local characters */
+  secondaryIdentifier?: string;
+  /** The nature of the name specified */
+  nameIdentifierType: NaturalPersonNameTypeCode;
+}
+
 /** Represents a legal person's name identifier */
 export interface LegalPersonNameId {
   /** Name by which the legal person is known */
+  legalPersonName: string;
+  /** The nature of the name specified */
+  legalPersonNameIdentifierType: LegalPersonNameTypeCode;
+}
+
+/** Represents a local legal person's name identifier (using local characters) */
+export interface LocalLegalPersonNameId {
+  /** Name by which the legal person is known using local characters */
   legalPersonName: string;
   /** The nature of the name specified */
   legalPersonNameIdentifierType: LegalPersonNameTypeCode;
@@ -128,6 +146,8 @@ export interface NationalIdentification<C> {
  *
  * **Array Bounds:**
  * - `name.nameIdentifier`: min 1, max 5 (covers multiple name variants: legal, short, aliases)
+ * - `name.localNameIdentifier`: max 5 (same as nameIdentifier, for local script)
+ * - `name.phoneticNameIdentifier`: max 5 (same as nameIdentifier, for phonetic representation)
  * - `geographicAddress`: max 5 (covers home + business + historical addresses)
  */
 export interface NaturalPerson {
@@ -135,8 +155,14 @@ export interface NaturalPerson {
    * The distinct words used as identification for an individual
    * @minItems nameIdentifier 1
    * @maxItems nameIdentifier 5
+   * @maxItems localNameIdentifier 5
+   * @maxItems phoneticNameIdentifier 5
    */
-  name: { nameIdentifier: NaturalPersonNameId[] };
+  name: {
+    nameIdentifier: NaturalPersonNameId[];
+    localNameIdentifier?: LocalNaturalPersonNameId[];
+    phoneticNameIdentifier?: LocalNaturalPersonNameId[];
+  };
   /**
    * The particulars of a location at which a person may be communicated with
    * @maxItems 5
@@ -160,6 +186,8 @@ export interface NaturalPerson {
  *
  * **Array Bounds:**
  * - `name.nameIdentifier`: min 1, max 3 (aligns with LegalPersonNameTypeCode: LEGL, SHRT, TRAD)
+ * - `name.localNameIdentifier`: max 3 (same as nameIdentifier, for local script)
+ * - `name.phoneticNameIdentifier`: max 3 (same as nameIdentifier, for phonetic representation)
  * - `geographicAddress`: max 5 (covers registered + principal + branch addresses)
  */
 export interface LegalPerson {
@@ -167,8 +195,14 @@ export interface LegalPerson {
    * The name of the legal person
    * @minItems nameIdentifier 1
    * @maxItems nameIdentifier 3
+   * @maxItems localNameIdentifier 3
+   * @maxItems phoneticNameIdentifier 3
    */
-  name: { nameIdentifier: LegalPersonNameId[] };
+  name: {
+    nameIdentifier: LegalPersonNameId[];
+    localNameIdentifier?: LocalLegalPersonNameId[];
+    phoneticNameIdentifier?: LocalLegalPersonNameId[];
+  };
   /**
    * The address of the legal person
    * @maxItems 5
@@ -182,10 +216,20 @@ export interface LegalPerson {
   countryOfRegistration?: CountryCode;
 }
 
-/** Represents either a natural person or a legal person */
+/**
+ * Represents either a natural person or a legal person
+ *
+ * **Array Bounds:**
+ * - `accountNumber`: max 20 (multiple wallets/accounts per person)
+ */
 export interface Person {
   naturalPerson?: NaturalPerson;
   legalPerson?: LegalPerson;
+  /**
+   * Identifier of an account that is used to process the transaction
+   * @maxItems 20
+   */
+  accountNumber?: string[];
 }
 
 /**
@@ -193,7 +237,6 @@ export interface Person {
  *
  * **Array Bounds:**
  * - `originatorPersons`: min 1, max 10 (covers joint accounts + margin)
- * - `accountNumber`: max 20 (multiple wallets/accounts per entity)
  */
 export interface Originator {
   /**
@@ -202,11 +245,6 @@ export interface Originator {
    * @maxItems 10
    */
   originatorPersons: Person[];
-  /**
-   * Identifier of an account that is used to process the transaction
-   * @maxItems 20
-   */
-  accountNumber?: string[];
 }
 
 /**
@@ -214,7 +252,6 @@ export interface Originator {
  *
  * **Array Bounds:**
  * - `beneficiaryPersons`: min 1, max 10 (same as originator)
- * - `accountNumber`: max 20 (same as originator)
  */
 export interface Beneficiary {
   /**
@@ -223,11 +260,6 @@ export interface Beneficiary {
    * @maxItems 10
    */
   beneficiaryPersons: Person[];
-  /**
-   * Identifier of an account that is used to process the transaction
-   * @maxItems 20
-   */
-  accountNumber?: string[];
 }
 
 /**

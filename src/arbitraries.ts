@@ -105,7 +105,9 @@ export const legalEntityNationalIdentification = () => fc.record({
 
 export const naturalPerson = () => fc.record({
   name: fc.record({
-    nameIdentifier: fc.array(naturalPersonNameId(), { minLength: 1, maxLength: 5 })
+    nameIdentifier: fc.array(naturalPersonNameId(), { minLength: 1, maxLength: 5 }),
+    localNameIdentifier: fc.option(fc.array(naturalPersonNameId(), { minLength: 1, maxLength: 5 }), { nil: undefined }),
+    phoneticNameIdentifier: fc.option(fc.array(naturalPersonNameId(), { minLength: 1, maxLength: 5 }), { nil: undefined })
   }),
   geographicAddress: fc.option(fc.array(address(), { minLength: 1, maxLength: 5 }), { nil: undefined }),
   nationalIdentification: fc.option(naturalPersonNationalIdentification(), { nil: undefined }),
@@ -119,7 +121,9 @@ export const naturalPerson = () => fc.record({
 
 export const legalPerson = () => fc.record({
   name: fc.record({
-    nameIdentifier: fc.array(legalPersonNameId(), { minLength: 1, maxLength: 3 })
+    nameIdentifier: fc.array(legalPersonNameId(), { minLength: 1, maxLength: 3 }),
+    localNameIdentifier: fc.option(fc.array(legalPersonNameId(), { minLength: 1, maxLength: 3 }), { nil: undefined }),
+    phoneticNameIdentifier: fc.option(fc.array(legalPersonNameId(), { minLength: 1, maxLength: 3 }), { nil: undefined })
   }),
   geographicAddress: fc.option(fc.array(address(), { minLength: 1, maxLength: 5 }), { nil: undefined }),
   customerNumber: fc.option(identifier(), { nil: undefined }),
@@ -128,18 +132,24 @@ export const legalPerson = () => fc.record({
 }) as fc.Arbitrary<IVMS101_2020.LegalPerson>;
 
 export const person = () => fc.oneof(
-  fc.record({ naturalPerson: naturalPerson(), legalPerson: fc.constant(undefined) }),
-  fc.record({ naturalPerson: fc.constant(undefined), legalPerson: legalPerson() })
+  fc.record({
+    naturalPerson: naturalPerson(),
+    legalPerson: fc.constant(undefined),
+    accountNumber: fc.option(fc.array(identifier(), { minLength: 1, maxLength: 20 }), { nil: undefined })
+  }),
+  fc.record({
+    naturalPerson: fc.constant(undefined),
+    legalPerson: legalPerson(),
+    accountNumber: fc.option(fc.array(identifier(), { minLength: 1, maxLength: 20 }), { nil: undefined })
+  })
 ) as fc.Arbitrary<IVMS101_2020.Person>;
 
 export const originator = () => fc.record({
-  originatorPersons: fc.array(person(), { minLength: 1, maxLength: 10 }),
-  accountNumber: fc.option(fc.array(identifier(), { minLength: 1, maxLength: 20 }), { nil: undefined })
+  originatorPersons: fc.array(person(), { minLength: 1, maxLength: 10 })
 }) as fc.Arbitrary<IVMS101_2020.Originator>;
 
 export const beneficiary = () => fc.record({
-  beneficiaryPersons: fc.array(person(), { minLength: 1, maxLength: 10 }),
-  accountNumber: fc.option(fc.array(identifier(), { minLength: 1, maxLength: 20 }), { nil: undefined })
+  beneficiaryPersons: fc.array(person(), { minLength: 1, maxLength: 10 })
 }) as fc.Arbitrary<IVMS101_2020.Beneficiary>;
 
 export const transferPath = () => fc.option(fc.record({
@@ -172,7 +182,9 @@ export const naturalPersonNameId2023 = () => fc.record({
 
 export const naturalPerson2023 = () => fc.record({
   name: fc.record({
-    nameIdentifier: fc.array(naturalPersonNameId2023(), { minLength: 1, maxLength: 5 })
+    nameIdentifier: fc.array(naturalPersonNameId2023(), { minLength: 1, maxLength: 5 }),
+    localNameIdentifier: fc.option(fc.array(naturalPersonNameId2023(), { minLength: 1, maxLength: 5 }), { nil: undefined }),
+    phoneticNameIdentifier: fc.option(fc.array(naturalPersonNameId2023(), { minLength: 1, maxLength: 5 }), { nil: undefined })
   }),
   geographicAddress: fc.option(fc.array(address(), { minLength: 1, maxLength: 5 }), { nil: undefined }),
   nationalIdentification: fc.option(naturalPersonNationalIdentification(), { nil: undefined }),
@@ -186,7 +198,9 @@ export const naturalPerson2023 = () => fc.record({
 
 export const legalPerson2023 = () => fc.record({
   name: fc.record({
-    nameIdentifier: fc.array(legalPersonNameId(), { minLength: 1, maxLength: 3 })
+    nameIdentifier: fc.array(legalPersonNameId(), { minLength: 1, maxLength: 3 }),
+    localNameIdentifier: fc.option(fc.array(legalPersonNameId(), { minLength: 1, maxLength: 3 }), { nil: undefined }),
+    phoneticNameIdentifier: fc.option(fc.array(legalPersonNameId(), { minLength: 1, maxLength: 3 }), { nil: undefined })
   }),
   geographicAddress: fc.option(fc.array(address(), { minLength: 1, maxLength: 5 }), { nil: undefined }),
   customerIdentification: fc.option(identifier(), { nil: undefined }),
@@ -195,18 +209,24 @@ export const legalPerson2023 = () => fc.record({
 }) as fc.Arbitrary<IVMS101_2023.LegalPerson>;
 
 export const person2023 = () => fc.oneof(
-  fc.record({ naturalPerson: naturalPerson2023(), legalPerson: fc.constant(undefined) }),
-  fc.record({ naturalPerson: fc.constant(undefined), legalPerson: legalPerson2023() })
+  fc.record({
+    naturalPerson: naturalPerson2023(),
+    legalPerson: fc.constant(undefined),
+    accountNumber: fc.option(fc.array(identifier(), { minLength: 1, maxLength: 20 }), { nil: undefined })
+  }),
+  fc.record({
+    naturalPerson: fc.constant(undefined),
+    legalPerson: legalPerson2023(),
+    accountNumber: fc.option(fc.array(identifier(), { minLength: 1, maxLength: 20 }), { nil: undefined })
+  })
 ) as fc.Arbitrary<IVMS101_2023.Person>;
 
 export const originator2023 = () => fc.record({
-  originatorPerson: fc.array(person2023(), { minLength: 1, maxLength: 10 }),
-  accountNumber: fc.option(fc.array(identifier(), { minLength: 1, maxLength: 20 }), { nil: undefined })
+  originatorPerson: fc.array(person2023(), { minLength: 1, maxLength: 10 })
 }) as fc.Arbitrary<IVMS101_2023.Originator>;
 
 export const beneficiary2023 = () => fc.record({
-  beneficiaryPerson: fc.array(person2023(), { minLength: 1, maxLength: 10 }),
-  accountNumber: fc.option(fc.array(identifier(), { minLength: 1, maxLength: 20 }), { nil: undefined })
+  beneficiaryPerson: fc.array(person2023(), { minLength: 1, maxLength: 10 })
 }) as fc.Arbitrary<IVMS101_2023.Beneficiary>;
 
 export const transferPath2023 = () => fc.option(fc.record({

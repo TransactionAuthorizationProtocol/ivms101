@@ -63,7 +63,8 @@ describe("Comprehensive Arbitrary Validation", () => {
         s.originatingVASP || s.beneficiaryVASP || s.transferPath
       );
       const hasAccountNumbers = samples.filter(s =>
-        s.originator.accountNumber || s.beneficiary.accountNumber
+        s.originator.originatorPersons.some(p => p.accountNumber) ||
+        s.beneficiary.beneficiaryPersons.some(p => p.accountNumber)
       );
 
       // Ensure we're generating diverse structures
