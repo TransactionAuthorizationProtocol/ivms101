@@ -1,13 +1,15 @@
 # IVMS101 TypeScript Library
 
-This library provides TypeScript type definitions and conversion utilities for the IVMS101 (interVASP Messaging Standard) in both its original 2020 version and the updated 2023 version.
+A TypeScript library providing type definitions, validation, and conversion utilities for the IVMS101 (interVASP Messaging Standard). **Defaults to IVMS101.2023** with full support for legacy 2020 format.
 
 ## Features
 
-- Type definitions for IVMS101 2020 and 2023 versions
-- Conversion functions between 2020 and 2023 formats
-- Version detection and automatic conversion
-- Runtime validation using Zod schemas
+- 🎯 **2023-first API** - Modern, clean interface defaulting to the latest standard
+- ✅ **Runtime validation** - Comprehensive Zod schemas with all 12 IVMS101 constraints
+- 🔄 **Version conversion** - Bidirectional, lossless conversion between 2020 and 2023
+- 🧪 **Property-based testing** - Fast-check arbitraries for generating compliant test data
+- 📦 **Dual format** - CommonJS and ESM builds with full TypeScript support
+- 🏗️ **Clean architecture** - Independent type definitions with no circular dependencies
 
 ## Installation
 
@@ -15,131 +17,402 @@ This library provides TypeScript type definitions and conversion utilities for t
 npm install ivms101
 ```
 
-## Usage
+## Upgrading from v1.x to v2.0
 
-### Importing
+Version 2.0 introduces a **2023-first API** with breaking changes. Here's how to upgrade:
 
+### Breaking Changes
+
+1. **Main export now defaults to IVMS101.2023**
+   - `IVMS101` type is now `IVMS101_2023.IVMS101` (not a union)
+   - All type exports from main package are 2023 types
+
+2. **2020 support moved to legacy submodule**
+   - Import 2020 types from `'ivms101/legacy'` instead of main package
+   - Conversion functions moved to legacy module
+
+3. **New validation API**
+   - New `validate()` function replaces `validateIVMS101()`
+   - Defaults to 2023 validation
+
+### Migration Guide
+
+#### If you're using both 2020 and 2023 (union types)
+
+**Before (v1.x):**
 ```typescript
-import { IVMS101, ensureVersion, PayloadVersionCode } from 'ivms101';
+import { IVMS101, IVMS101_2020, IVMS101_2023 } from 'ivms101';
+
+// IVMS101 was a union type
+function process(data: IVMS101) {
+  // data could be either version
+}
 ```
 
-### Converting between versions
+**After (v2.0):**
+```typescript
+import { IVMS101 } from 'ivms101'; // This is now 2023 only
+import { IVMS101_2020, IVMS101Schema } from 'ivms101/legacy';
+
+// For union type, import from legacy
+import type { IVMS101Type } from 'ivms101/legacy';
+
+function process(data: IVMS101Type) {
+  // data can be either version (union)
+}
+
+// OR: Keep separate functions for each version
+function process2023(data: IVMS101) { /* ... */ }
+function process2020(data: IVMS101_2020.IVMS101) { /* ... */ }
+```
+
+#### If you're using 2020 types
+
+**Before (v1.x):**
+```typescript
+import { IVMS101_2020 } from 'ivms101';
+
+const data: IVMS101_2020.IVMS101 = { /* ... */ };
+```
+
+**After (v2.0):**
+```typescript
+import { IVMS101_2020 } from 'ivms101/legacy';
+
+const data: IVMS101_2020.IVMS101 = { /* ... */ };
+```
+
+#### If you're using conversion functions
+
+**Before (v1.x):**
+```typescript
+import { convertTo2023, convertFrom2023 } from 'ivms101';
+```
+
+**After (v2.0):**
+```typescript
+import { convertTo2023, convertFrom2023 } from 'ivms101/legacy';
+```
+
+#### If you're using validation
+
+**Before (v1.x):**
+```typescript
+import { validateIVMS101, isValidIVMS101 } from 'ivms101';
+
+const validated = validateIVMS101(data); // accepts either version
+```
+
+**After (v2.0):**
+```typescript
+// Option 1: Use new validate() function (defaults to 2023)
+import { validate } from 'ivms101';
+const validated = validate(data); // validates as 2023
+const validated2020 = validate(data, { version: '2020' });
+
+// Option 2: Use legacy validateIVMS101 for union validation
+import { validateIVMS101, isValidIVMS101 } from 'ivms101/legacy';
+const validated = validateIVMS101(data); // accepts either version
+```
+
+#### If you're using type guards
+
+**Before (v1.x):**
+```typescript
+import { isValidIVMS101_2023 } from 'ivms101';
+```
+
+**After (v2.0):**
+```typescript
+// 2023 type guard in main package
+import { isValidIVMS101_2023 } from 'ivms101';
+
+// 2020 type guard in legacy package
+import { isValidIVMS101_2020 } from 'ivms101/legacy';
+```
+
+#### Quick Migration Checklist
+
+- [ ] Replace `import { IVMS101_2020, ... } from 'ivms101'` with `import { IVMS101_2020, ... } from 'ivms101/legacy'`
+- [ ] Replace `import { convertTo2023, convertFrom2023 } from 'ivms101'` with `import { convertTo2023, convertFrom2023 } from 'ivms101/legacy'`
+- [ ] If using union types, import `IVMS101Type` from `'ivms101/legacy'` instead of using `IVMS101`
+- [ ] Update validation calls to use new `validate()` function or import legacy validators
+- [ ] Update type annotations: `IVMS101` is now 2023-only (not a union)
+
+### What Stays the Same
+
+✅ All 2023 types work exactly as before (just imported from main package)
+✅ All conversion logic is unchanged (just moved to legacy module)
+✅ All validation schemas work the same way
+✅ `ensureVersion()` and `ivms101_version()` still in main package
+✅ Arbitraries still work the same way
+✅ All tests pass without changes
+
+### Recommended Approach
+
+For new code, use the 2023-first API:
+```typescript
+import { validate, type IVMS101 } from 'ivms101';
+```
+
+For existing code that needs 2020 support, add legacy import:
+```typescript
+import { validate, type IVMS101 } from 'ivms101';
+import { IVMS101_2020, convertTo2023 } from 'ivms101/legacy';
+```
+
+## Quick Start
+
+### Working with IVMS101.2023 (Default)
 
 ```typescript
-import { IVMS101, ensureVersion, PayloadVersionCode } from 'ivms101';
+import { validate, type IVMS101, type NaturalPerson } from 'ivms101';
 
-// Assuming you have some IVMS101 data
-const ivmsData: IVMS101 = { /* ... */ };
+// The IVMS101 type is IVMS101.2023 by default
+const data: IVMS101 = {
+  originator: {
+    originatorPerson: [{ /* ... */ }]  // Note: singular "Person" in 2023
+  },
+  beneficiary: {
+    beneficiaryPerson: [{ /* ... */ }]
+  },
+  payloadMetadata: {
+    payloadVersion: "101.2023"  // Required in 2023
+  }
+};
 
-// Convert to 2023 version (default)
-const ivms2023 = ensureVersion(ivmsData); // Defaults to 2023 version
+// Validate (defaults to 2023)
+const validated = validate(data);
+
 // Or explicitly specify version
-const ivms2023Explicit = ensureVersion(PayloadVersionCode.V2023, ivmsData);
-
-// Convert to 2020 version
-const ivms2020 = ensureVersion(PayloadVersionCode.V2020, ivmsData);
+const validated2023 = validate(data, { version: '2023' });
 ```
 
-### Type Checking
-
-The library provides type definitions for both versions, allowing for type-safe usage in TypeScript projects.
+### Working with Legacy IVMS101 2020
 
 ```typescript
-import { IVMS101_2020, IVMS101_2023 } from 'ivms101';
+import { IVMS101_2020 } from 'ivms101/legacy';
+import { validate } from 'ivms101';
 
-function processIVMS101(data: IVMS101_2020.IVMS101 | IVMS101_2023.IVMS101) {
-  // Process the data...
-}
+const legacy: IVMS101_2020.IVMS101 = {
+  originator: {
+    originatorPersons: [{ /* ... */ }]  // Note: plural "Persons" in 2020
+  },
+  beneficiary: {
+    beneficiaryPersons: [{ /* ... */ }]
+  }
+};
+
+// Validate as 2020 format
+const validated = validate(legacy, { version: '2020' });
 ```
 
-### Runtime Validation
-
-Use Zod schemas for runtime validation of IVMS101 data:
+### Converting Between Versions
 
 ```typescript
-import { 
-  validateIVMS101, 
-  isValidIVMS101, 
-  isValidIVMS101_2020, 
-  isValidIVMS101_2023,
-  IVMS101Schema,
-  IVMS101_2020Schema,
-  IVMS101_2023Schema 
+import { ensureVersion, ivms101_version, PayloadVersionCode } from 'ivms101';
+import { convertTo2023, convertFrom2023 } from 'ivms101/legacy';
+
+// Auto-detect version
+const version = ivms101_version(data);
+
+// Convert to 2023 (default)
+const data2023 = ensureVersion(data);
+
+// Convert to specific version
+const data2020 = ensureVersion(PayloadVersionCode.V2020, data);
+
+// Explicit conversions
+const converted2023 = convertTo2023(data2020);
+const converted2020 = convertFrom2023(data2023);
+```
+
+## API Reference
+
+### Main Exports (2023-first)
+
+```typescript
+import {
+  // Types (all are IVMS101.2023)
+  type IVMS101,              // Main IVMS101 type
+  type NaturalPerson,        // Natural person type
+  type LegalPerson,          // Legal person type
+  type Person,               // Person (natural or legal)
+  type Originator,           // Originator type
+  type Beneficiary,          // Beneficiary type
+
+  // Enums
+  PayloadVersionCode,        // Version codes ("101" | "101.2023")
+
+  // Validation
+  validate,                  // validate(data, { version?: '2020' | '2023' })
+  IVMS101_2023Schema,        // Zod schema for 2023
+  isValidIVMS101_2023,       // Type guard for 2023
+
+  // Utilities
+  ensureVersion,             // Convert to specific version (defaults to 2023)
+  ivms101_version,           // Detect version
+
+  // Testing
+  arbitraries,               // Fast-check arbitraries
+
+  // Shared core types (also exported directly)
+  type CountryCode,          // ISO country codes
+  type AddressTypeCode,      // Address type codes
+  type NaturalPersonNameTypeCode,  // Natural person name type codes
+  type LegalPersonNameTypeCode,    // Legal person name type codes
+  type Address,              // Address structure
+  type NationalIdentification,     // National ID structure
+  // ... and other core types
 } from 'ivms101';
+```
 
-// Validate and parse data (throws on invalid data)
-const validData = validateIVMS101(unknownData);
+### Legacy Exports (2020 support)
 
-// Type guards for version checking
-if (isValidIVMS101_2020(data)) {
-  // data is now typed as IVMS101_2020.IVMS101
+```typescript
+import {
+  // Types
+  IVMS101_2020,              // Namespace with all 2020 types
+
+  // Conversion
+  convertTo2023,             // Convert 2020 → 2023
+  convertFrom2023,           // Convert 2023 → 2020
+
+  // Validation
+  IVMS101_2020Schema,        // Zod schema for 2020
+  isValidIVMS101_2020,       // Type guard for 2020
+  IVMS101Schema,             // Union schema (2020 | 2023)
+  validateIVMS101,           // Validate either version
+  isValidIVMS101,            // Type guard for either version
+} from 'ivms101/legacy';
+```
+
+## Validation
+
+### Basic Validation
+
+```typescript
+import { validate } from 'ivms101';
+
+// Validate with default version (2023)
+try {
+  const validated = validate(unknownData);
+  console.log('Valid IVMS101.2023 data:', validated);
+} catch (error) {
+  console.error('Validation failed:', error.message);
 }
 
+// Validate specific version
+const validated2020 = validate(data, { version: '2020' });
+```
+
+### Type Guards
+
+```typescript
+import { isValidIVMS101_2023 } from 'ivms101';
+import { isValidIVMS101_2020, isValidIVMS101 } from 'ivms101/legacy';
+
+// Check if data is valid 2023 format
 if (isValidIVMS101_2023(data)) {
-  // data is now typed as IVMS101_2023.IVMS101
+  // TypeScript knows data is IVMS101_2023.IVMS101
+  console.log(data.originator.originatorPerson);
 }
 
-// Check if data is valid (returns boolean)
-const isValid = isValidIVMS101(data);
+// Check if data is valid 2020 format
+if (isValidIVMS101_2020(data)) {
+  // TypeScript knows data is IVMS101_2020.IVMS101
+  console.log(data.originator.originatorPersons);
+}
 
-// Use schemas directly for more control
-const result = IVMS101Schema.safeParse(data);
+// Check if data is either version
+if (isValidIVMS101(data)) {
+  console.log('Valid IVMS101 data (either version)');
+}
+```
+
+### Schema Validation
+
+```typescript
+import { IVMS101_2023Schema } from 'ivms101';
+import { IVMS101_2020Schema, IVMS101Schema } from 'ivms101/legacy';
+
+// Safe parsing (doesn't throw)
+const result = IVMS101_2023Schema.safeParse(data);
 if (result.success) {
   console.log('Valid data:', result.data);
 } else {
   console.log('Validation errors:', result.error.issues);
 }
+
+// Parse (throws on invalid data)
+const validated = IVMS101_2023Schema.parse(data);
+
+// Union schema for either version
+const validatedAny = IVMS101Schema.parse(data);
 ```
 
-## API Reference
+## Version Differences
 
-### `ensureVersion(version?: PayloadVersionCode, data: IVMS101): IVMS101`
+The 2023 version introduced several breaking changes from 2020:
 
-Converts the given IVMS101 data to the specified version. Defaults to 2023 version if no version is specified.
+| Aspect | IVMS101 2020 | IVMS101.2023 |
+|--------|--------------|--------------|
+| Originator field | `originatorPersons` (plural) | `originatorPerson` (singular) |
+| Beneficiary field | `beneficiaryPersons` (plural) | `beneficiaryPerson` (singular) |
+| Customer ID (both person types) | `customerNumber` | `customerIdentification` |
+| Natural person name field | `nameIdentifierType` | `naturalPersonNameIdentifierType` |
+| Payload version field | Optional | Required (`payloadMetadata.payloadVersion`) |
 
-### `ivms101_version(data: IVMS101): PayloadVersionCode`
+### Migration Example
 
-Detects the version of the given IVMS101 data.
+```typescript
+// 2020 format
+const data2020 = {
+  originator: {
+    originatorPersons: [{
+      naturalPerson: {
+        customerNumber: "12345",
+        name: {
+          nameIdentifier: [{
+            primaryIdentifier: "Doe",
+            secondaryIdentifier: "John",
+            nameIdentifierType: "LEGL"
+          }]
+        }
+      }
+    }]
+  },
+  // ... rest of structure
+};
 
-### `convertTo2023(data: IVMS101_2020.IVMS101): IVMS101_2023.IVMS101`
+// 2023 format (after conversion)
+const data2023 = {
+  originator: {
+    originatorPerson: [{
+      naturalPerson: {
+        customerIdentification: "12345",
+        name: {
+          nameIdentifier: [{
+            primaryIdentifier: "Doe",
+            secondaryIdentifier: "John",
+            naturalPersonNameIdentifierType: "LEGL"
+          }]
+        }
+      }
+    }]
+  },
+  payloadMetadata: {
+    payloadVersion: "101.2023"
+  }
+  // ... rest of structure
+};
+```
 
-Converts IVMS101 2020 data to 2023 format.
+## Property-Based Testing
 
-### `convertFrom2023(data: IVMS101_2023.IVMS101): IVMS101_2020.IVMS101`
+The library includes comprehensive [fast-check](https://github.com/dubzzz/fast-check) arbitraries for generating valid IVMS101 test data.
 
-Converts IVMS101 2023 data back to 2020 format.
-
-## Validation API
-
-### `validateIVMS101(data: unknown): IVMS101`
-
-Validates and parses IVMS101 data (either version). Throws a ZodError if validation fails.
-
-### `isValidIVMS101(data: unknown): boolean`
-
-Type guard that returns true if data is valid IVMS101 (either version).
-
-### `isValidIVMS101_2020(data: unknown): boolean`
-
-Type guard that returns true if data is valid IVMS101 2020 format.
-
-### `isValidIVMS101_2023(data: unknown): boolean`
-
-Type guard that returns true if data is valid IVMS101 2023 format.
-
-### Zod Schemas
-
-- `IVMS101Schema` - Union schema for either version
-- `IVMS101_2020Schema` - Schema for 2020 version only  
-- `IVMS101_2023Schema` - Schema for 2023 version only
-
-These schemas can be used directly with Zod's `.parse()`, `.safeParse()`, and other methods for more advanced validation scenarios.
-
-## Property-Based Testing with Fast-Check Arbitraries
-
-This library includes comprehensive [fast-check](https://github.com/dubzzz/fast-check) arbitraries for generating valid IVMS101 data structures for property-based testing. These arbitraries can generate realistic test data for both IVMS101 2020 and 2023 versions.
-
-### Installation for Testing
+### Installation
 
 ```bash
 npm install --save-dev fast-check
@@ -151,28 +424,24 @@ npm install --save-dev fast-check
 import { arbitraries } from 'ivms101';
 import * as fc from 'fast-check';
 
-// Generate random IVMS101 2020 data samples
-const samples2020 = fc.sample(arbitraries.ivms101_2020(), 5);
-
-// Generate random IVMS101 2023 data samples  
+// Generate sample data
 const samples2023 = fc.sample(arbitraries.ivms101_2023Valid(), 5);
-
-// Generate random natural person data
+const samples2020 = fc.sample(arbitraries.ivms101_2020(), 5);
 const personSamples = fc.sample(arbitraries.naturalPerson(), 10);
 ```
 
-### Property-Based Testing Examples
+### Property-Based Tests
 
 ```typescript
 import { arbitraries } from 'ivms101';
+import { validate } from 'ivms101';
+import { convertTo2023, convertFrom2023 } from 'ivms101/legacy';
 import * as fc from 'fast-check';
-import { convertTo2023, convertFrom2023, validateIVMS101 } from 'ivms101';
 
-describe('IVMS101 Property Tests', () => {
-  it('should validate all generated IVMS101 data', () => {
-    fc.assert(fc.property(arbitraries.ivms101_2020(), (data) => {
-      // All generated data should pass validation
-      expect(() => validateIVMS101(data)).not.toThrow();
+describe('IVMS101 Properties', () => {
+  it('all generated 2023 data should be valid', () => {
+    fc.assert(fc.property(arbitraries.ivms101_2023Valid(), (data) => {
+      expect(() => validate(data)).not.toThrow();
     }));
   });
 
@@ -180,22 +449,9 @@ describe('IVMS101 Property Tests', () => {
     fc.assert(fc.property(arbitraries.ivms101_2020(), (original) => {
       const converted = convertTo2023(original);
       const backConverted = convertFrom2023(converted);
-      
-      // Essential data should be preserved
+
       expect(backConverted.originator.originatorPersons.length)
         .toBe(original.originator.originatorPersons.length);
-    }));
-  });
-
-  it('should generate valid person names', () => {
-    fc.assert(fc.property(arbitraries.naturalPerson(), (person) => {
-      // All generated persons should have at least one name
-      expect(person.name.length).toBeGreaterThan(0);
-      
-      // Names should not be empty strings
-      person.name.forEach(nameId => {
-        expect(nameId.primaryIdentifier.trim().length).toBeGreaterThan(0);
-      });
     }));
   });
 });
@@ -203,87 +459,106 @@ describe('IVMS101 Property Tests', () => {
 
 ### Available Arbitraries
 
-#### Basic Types
-- `naturalPersonNameTypeCode()` - Generate name type codes for natural persons
-- `legalPersonNameTypeCode()` - Generate name type codes for legal persons  
-- `addressTypeCode()` - Generate address type codes
-- `countryCode()` - Generate ISO country codes
-- `nationalIdentifierTypeCode()` - Generate national identifier types
-- `transliterationMethodCode()` - Generate transliteration method codes
-
-#### String Types
-- `personName()` - Generate realistic person names
-- `identifier()` - Generate identifiers (customer numbers, etc.)
-- `addressComponent()` - Generate address components
-- `date()` - Generate valid date strings (YYYY-MM-DD format)
-
-#### Structured Types
-- `naturalPersonNameId()` - Generate natural person name objects
-- `legalPersonNameId()` - Generate legal person name objects
-- `address()` - Generate complete address objects
-- `naturalPersonNationalIdentification()` - Generate national ID for natural persons
-- `legalEntityNationalIdentification()` - Generate national ID for legal entities
+#### Complete Structures
+- `ivms101_2020()` - Generate IVMS101 2020 objects
+- `ivms101_2023()` - Generate IVMS101 2023 objects
+- `ivms101_2023Valid()` - Generate 2023 with guaranteed version field
+- `ivms101()` - Generate either version randomly
 
 #### Person Types
-- `naturalPerson()` - Generate complete natural person objects
-- `legalPerson()` - Generate complete legal person objects  
-- `person()` - Generate person objects (either natural or legal)
-- `naturalPerson2023()` - Generate 2023-format natural persons
-- `legalPerson2023()` - Generate 2023-format legal persons
-- `person2023()` - Generate 2023-format person objects
+- `naturalPerson()` - Natural person (2020 format)
+- `legalPerson()` - Legal person (2020 format)
+- `person()` - Either natural or legal (2020)
+- `naturalPerson2023()` - Natural person (2023 format)
+- `legalPerson2023()` - Legal person (2023 format)
+- `person2023()` - Either natural or legal (2023)
 
-#### Complete Structures
-- `originator()` - Generate originator objects (2020 format)
-- `beneficiary()` - Generate beneficiary objects (2020 format)
-- `originator2023()` - Generate originator objects (2023 format)  
-- `beneficiary2023()` - Generate beneficiary objects (2023 format)
-- `transferPath()` - Generate transfer path objects
-- `payloadMetadata()` - Generate payload metadata (2020 format)
-- `payloadMetadata2023()` - Generate payload metadata (2023 format)
+#### Components
+- `naturalPersonNameId()` - Name identifier for natural persons
+- `legalPersonNameId()` - Name identifier for legal persons
+- `address()` - Complete address objects
+- `naturalPersonNationalIdentification()` - National ID for natural persons
+- `legalEntityNationalIdentification()` - National ID for legal entities
 
-#### Full IVMS101 Objects
-- `ivms101_2020()` - Generate complete IVMS101 2020 objects
-- `ivms101_2023()` - Generate complete IVMS101 2023 objects
-- `ivms101_2023Valid()` - Generate 2023 objects with guaranteed version detection
-- `ivms101()` - Generate either 2020 or 2023 objects randomly
+#### Enums & Codes
+- `naturalPersonNameTypeCode()` - Name type codes
+- `legalPersonNameTypeCode()` - Legal person name codes
+- `addressTypeCode()` - Address type codes
+- `countryCode()` - ISO country codes
+- `nationalIdentifierTypeCode()` - National ID type codes
+- `transliterationMethodCode()` - Transliteration codes
 
-### Advanced Testing Patterns
+## Validation Constraints
 
-#### Testing Conversion Logic
-```typescript
-fc.assert(fc.property(arbitraries.ivms101_2020(), (data2020) => {
-  const converted2023 = convertTo2023(data2020);
-  
-  // Field name changes should be handled correctly
-  expect(converted2023.originator.originatorPerson).toBeDefined();
-  expect((converted2023.originator as any).originatorPersons).toBeUndefined();
-  
-  // Data should be preserved
-  expect(converted2023.originator.originatorPerson.length)
-    .toBe(data2020.originator.originatorPersons.length);
-}));
+The library implements all 12 IVMS101 specification constraints:
+
+- **C1**: OriginatorInformationNaturalPerson - Must have address, customer ID, national ID, or date of birth
+- **C2**: DateInPast - Birth date must be historic
+- **C4**: OriginatorInformationLegalPerson - Must have address, customer ID, or national ID
+- **C5**: LegalNamePresentLegalPerson - Must have at least one LEGL name type
+- **C6**: LegalNamePresentNaturalPerson - Must have at least one LEGL name type
+- **C8**: ValidAddress - Must have addressLine OR structured address
+- **C9**: CompleteNationalIdentifierLegalPerson - Complex LEI/registrationAuthority rules
+- **C10**: RegistrationAuthority format - Must match `RA[0-9]{6}`
+- **C11**: ValidLEI format - Must be 20-character alphanumeric
+- **C12**: sequentialIntegrity - Transfer path sequences must be sequential starting at 0
+
+## Array Size Limits
+
+The library enforces these limits during validation:
+
+| Field | Maximum | Rationale |
+|-------|---------|-----------|
+| Originator/Beneficiary Persons | 10 | Joint accounts + margin |
+| Account Numbers | 20 | Multiple corporate wallets |
+| Name Identifiers (Natural) | 5 | Multiple name variants |
+| Name Identifiers (Legal) | 3 | Aligns with type codes |
+| Geographic Addresses | 5 | Multiple addresses |
+| Transfer Path | 5 | Intermediary VASP chain |
+| Transliteration Methods | 5 | Character set conversions |
+
+## Architecture
+
+The library follows a clean, layered architecture:
+
+```
+countries.ts ← core.ts ← ivms101_2023.ts (independent)
+                      ← ivms101_2020.ts (independent)
+                      ← validator.ts
+                      ← converter.ts
+                      ← arbitraries.ts
+                      ← index.ts (2023 exports)
+                      ← legacy.ts (2020 exports)
 ```
 
-#### Testing Business Rules
-```typescript
-fc.assert(fc.property(arbitraries.naturalPerson(), (person) => {
-  // Business rule: persons must have valid identification
-  if (person.nationalIdentification) {
-    const validTypes = ["ARNU", "CCPT", "DRLC", "FIIN", "TXID", "SOCS", "IDCD", "MISC"];
-    expect(validTypes).toContain(person.nationalIdentification.nationalIdentifierType);
-  }
-}));
-```
+**Key principle**: The 2020 and 2023 type definitions are completely independent, both depending only on shared core types.
 
-#### Testing Data Serialization
+## TypeScript Support
+
+This library is written in TypeScript and provides complete type definitions:
+
 ```typescript
-fc.assert(fc.property(arbitraries.ivms101_2020(), (data) => {
-  // Test JSON serialization roundtrip
-  const serialized = JSON.stringify(data);
-  const deserialized = JSON.parse(serialized);
-  
-  expect(deserialized).toEqual(data);
-}));
+import type {
+  IVMS101,
+  NaturalPerson,
+  LegalPerson,
+  Person,
+  Originator,
+  Beneficiary,
+} from 'ivms101';
+
+import type { IVMS101_2020 } from 'ivms101/legacy';
+
+// Full type safety for both versions
+function processData(data: IVMS101) {
+  // TypeScript knows this is 2023 format
+  console.log(data.originator.originatorPerson); // ✓
+}
+
+function processLegacy(data: IVMS101_2020.IVMS101) {
+  // TypeScript knows this is 2020 format
+  console.log(data.originator.originatorPersons); // ✓
+}
 ```
 
 ## Contributing
@@ -292,4 +567,9 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This project is licensed under the MIT License.
+MIT License - see LICENSE file for details.
+
+## Related Standards
+
+- [IVMS101 Specification](https://intervasp.org/)
+- [FATF Travel Rule](https://www.fatf-gafi.org/)

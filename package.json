@@ -1,24 +1,54 @@
 {
-  "name": "ivms101",
-  "version": "1.3.0",
-  "description": "IVMS101 and IVMS101.2023 TypeScript library",
-  "type": "module",
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "source": "src/index.ts",
-  "author": {
-    "email": "pelle@notabene.id"
-  },
-  "scripts": {
-    "build": "tsup",
-    "test": "vitest"
-  },
-  "devDependencies": {
-    "fast-check": "^4.3.0",
-    "tsup": "^8.5.0",
-    "typescript": "^5.9.0",
-    "vitest": "^3.2.0",
-    "zod": "^4.0.0"
-  }
+	"name": "ivms101",
+	"version": "2.0.0",
+	"description": "IVMS101.2023 TypeScript library with legacy 2020 support",
+	"type": "module",
+	"main": "dist/index.cjs",
+	"module": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"source": "src/index.ts",
+	"exports": {
+		".": {
+			"import": {
+				"types": "./dist/index.d.ts",
+				"default": "./dist/index.js"
+			},
+			"require": {
+				"types": "./dist/index.d.cts",
+				"default": "./dist/index.cjs"
+			}
+		},
+		"./legacy": {
+			"import": {
+				"types": "./dist/legacy.d.ts",
+				"default": "./dist/legacy.js"
+			},
+			"require": {
+				"types": "./dist/legacy.d.cts",
+				"default": "./dist/legacy.cjs"
+			}
+		}
+	},
+	"author": {
+		"name": "Pelle Braendgaard",
+		"email": "pelle@notabene.id"
+	},
+	"scripts": {
+		"build": "tsup",
+		"test": "vitest",
+		"format": "biome format .",
+		"format:fix": "biome format --write .",
+		"lint": "biome lint .",
+		"lint:fix": "biome lint --write .",
+		"check": "biome check .",
+		"fix": "biome check --write ."
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.3.7",
+		"fast-check": "^4.3.0",
+		"tsup": "^8.5.0",
+		"typescript": "^5.9.0",
+		"vitest": "^3.2.0",
+		"zod": "^4.0.0"
+	}
 }
