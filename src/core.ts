@@ -7,11 +7,11 @@ import type { CountryCode } from "./countries";
 
 /** Codes representing the nature of a natural person's name */
 export type NaturalPersonNameTypeCode =
-  | "ALIA"
-  | "BIRT"
-  | "MAID"
-  | "LEGL"
-  | "MISC";
+	| "ALIA"
+	| "BIRT"
+	| "MAID"
+	| "LEGL"
+	| "MISC";
 
 /** Codes representing the nature of a legal person's name */
 export type LegalPersonNameTypeCode = "LEGL" | "SHRT" | "TRAD";
@@ -34,67 +34,67 @@ export type AddressTypeCode = "HOME" | "BIZZ" | "GEOG";
  * - **MISC**: Miscellaneous - Other types of national identification not covered by the above codes
  */
 export type NationalIdentifierTypeCode =
-  | "ARNU"
-  | "CCPT"
-  | "RAID"
-  | "DRLC"
-  | "FIIN"
-  | "TXID"
-  | "SOCS"
-  | "IDCD"
-  | "LEIX"
-  | "MISC";
+	| "ARNU"
+	| "CCPT"
+	| "RAID"
+	| "DRLC"
+	| "FIIN"
+	| "TXID"
+	| "SOCS"
+	| "IDCD"
+	| "LEIX"
+	| "MISC";
 
 export type LegalEntityNationalIdentifierTypeCode = Omit<
-  NationalIdentifierTypeCode,
-  "ARNU" | "CCPT" | "DRLC" | "SOCS" | "IDCD"
+	NationalIdentifierTypeCode,
+	"ARNU" | "CCPT" | "DRLC" | "SOCS" | "IDCD"
 >;
 
 export type NaturalPersonNationalIdentifierTypeCode = Omit<
-  NationalIdentifierTypeCode,
-  "LEIX" | "RAID"
+	NationalIdentifierTypeCode,
+	"LEIX" | "RAID"
 >;
 
 /** Codes identifying the method used to map from a national system of writing to Latin script */
 export type TransliterationMethodCode =
-  | "arab"
-  | "aran"
-  | "armn"
-  | "cyrl"
-  | "deva"
-  | "geor"
-  | "grek"
-  | "hani"
-  | "hebr"
-  | "kana"
-  | "kore"
-  | "thai"
-  | "othr";
+	| "arab"
+	| "aran"
+	| "armn"
+	| "cyrl"
+	| "deva"
+	| "geor"
+	| "grek"
+	| "hani"
+	| "hebr"
+	| "kana"
+	| "kore"
+	| "thai"
+	| "othr";
 
 /** Represents a local natural person's name identifier (using local characters) */
 export interface LocalNaturalPersonNameId {
-  /** This may be the family name, maiden name, or married name using local characters */
-  primaryIdentifier: string;
-  /** These may be forenames, given names, initials, or other secondary names using local characters */
-  secondaryIdentifier?: string;
-  /** The nature of the name specified */
-  nameIdentifierType: NaturalPersonNameTypeCode;
+	/** This may be the family name, maiden name, or married name using local characters */
+	primaryIdentifier: string;
+	/** These may be forenames, given names, initials, or other secondary names using local characters */
+	secondaryIdentifier?: string;
+	/** The nature of the name specified */
+	nameIdentifierType: NaturalPersonNameTypeCode;
 }
 
 /** Represents a legal person's name identifier */
 export interface LegalPersonNameId {
-  /** Name by which the legal person is known */
-  legalPersonName: string;
-  /** The nature of the name specified */
-  legalPersonNameIdentifierType: LegalPersonNameTypeCode;
+	/** Name by which the legal person is known */
+	legalPersonName: string;
+	/** The nature of the name specified */
+	legalPersonNameIdentifierType: LegalPersonNameTypeCode;
 }
 
 /** Represents a local legal person's name identifier (using local characters) */
 export interface LocalLegalPersonNameId {
-  /** Name by which the legal person is known using local characters */
-  legalPersonName: string;
-  /** The nature of the name specified */
-  legalPersonNameIdentifierType: LegalPersonNameTypeCode;
+	/** Name by which the legal person is known using local characters */
+	legalPersonName: string;
+	/** The nature of the name specified */
+	legalPersonNameIdentifierType: LegalPersonNameTypeCode;
 }
 
 /**
@@ -110,54 +110,54 @@ export interface LocalLegalPersonNameId {
  * - (streetName AND (buildingName OR buildingNumber))
  */
 export interface Address {
-  /** Identifies the nature of the address */
-  addressType: AddressTypeCode;
-  /** Identification of a division of a large organisation or building */
-  department?: string;
-  /** Identification of a sub-division of a large organisation or building */
-  subDepartment?: string;
-  /** Name of a street or thoroughfare */
-  streetName?: string;
-  /** Number that identifies the position of a building on a street */
-  buildingNumber?: string;
-  /** Name of the building or house */
-  buildingName?: string;
-  /** Floor or storey within a building */
-  floor?: string;
-  /** Numbered box in a post office, assigned to a person or organisation, where letters are kept until called for */
-  postBox?: string;
-  /** Building room number */
-  room?: string;
-  /** Identifier consisting of a group of letters and/or numbers */
-  postcode?: string;
-  /** Name of a built-up area, with defined boundaries, and a local government */
-  townName: string;
-  /** Specific location name within the town */
-  townLocationName?: string;
-  /** Identifies a subdivision within a country subdivision */
-  districtName?: string;
-  /** Identifies a subdivision of a country */
-  countrySubDivision?: string;
-  /** Nation with its own government */
-  country: CountryCode;
-  /**
-   * Information that locates and identifies a specific address, as defined by postal services,
-   * presented in free format text.
-   *
-   * Array of 0 to 7 lines, each max 70 characters (Max70Text)
-   * @maxItems 7
-   */
-  addressLine?: string[];
+	/** Identifies the nature of the address */
+	addressType: AddressTypeCode;
+	/** Identification of a division of a large organisation or building */
+	department?: string;
+	/** Identification of a sub-division of a large organisation or building */
+	subDepartment?: string;
+	/** Name of a street or thoroughfare */
+	streetName?: string;
+	/** Number that identifies the position of a building on a street */
+	buildingNumber?: string;
+	/** Name of the building or house */
+	buildingName?: string;
+	/** Floor or storey within a building */
+	floor?: string;
+	/** Numbered box in a post office, assigned to a person or organisation, where letters are kept until called for */
+	postBox?: string;
+	/** Building room number */
+	room?: string;
+	/** Identifier consisting of a group of letters and/or numbers */
+	postcode?: string;
+	/** Name of a built-up area, with defined boundaries, and a local government */
+	townName: string;
+	/** Specific location name within the town */
+	townLocationName?: string;
+	/** Identifies a subdivision within a country subdivision */
+	districtName?: string;
+	/** Identifies a subdivision of a country */
+	countrySubDivision?: string;
+	/** Nation with its own government */
+	country: CountryCode;
+	/**
+	 * Information that locates and identifies a specific address, as defined by postal services,
+	 * presented in free format text.
+	 *
+	 * Array of 0 to 7 lines, each max 70 characters (Max70Text)
+	 * @maxItems 7
+	 */
+	addressLine?: string[];
 }
 
 /** Represents a national identification */
 export interface NationalIdentification<C> {
-  /** An identifier issued by an appropriate issuing authority */
-  nationalIdentifier: string;
-  /** Specifies the type of identifier */
-  nationalIdentifierType: C;
-  /** Country of the issuing authority */
-  countryOfIssue?: CountryCode;
-  /** A code specifying the registration authority */
-  registrationAuthority?: string;
+	/** An identifier issued by an appropriate issuing authority */
+	nationalIdentifier: string;
+	/** Specifies the type of identifier */
+	nationalIdentifierType: C;
+	/** Country of the issuing authority */
+	countryOfIssue?: CountryCode;
+	/** A code specifying the registration authority */
+	registrationAuthority?: string;
 }
