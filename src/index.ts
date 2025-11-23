@@ -31,8 +31,27 @@ export { ensureVersion, ivms101_version };
 // Export fast-check arbitraries for property-based testing
 export * as arbitraries from "./arbitraries";
 
-// Export shared core types for direct access
-export * as Core from "./core";
+// Export shared core types
+export type {
+	Address,
+	AddressTypeCode,
+	LegalEntityNationalIdentifierTypeCode,
+	LegalPersonNameTypeCode,
+	LocalLegalPersonNameId,
+	LocalNaturalPersonNameId,
+	NationalIdentification,
+	NationalIdentifierTypeCode,
+	NaturalPersonNameTypeCode,
+	NaturalPersonNationalIdentifierTypeCode,
+	TransliterationMethodCode,
+} from "./core";
+
+// Re-export LegalPersonNameId from ivms101_2023 (defined in core)
+export type { LegalPersonNameId } from "./ivms101_2023";
+
+// Export country codes
+export type { CountryCode } from "./countries";
+
 // Export validation with version parameter (defaults to 2023)
 export {
 	IVMS101_2023Schema,

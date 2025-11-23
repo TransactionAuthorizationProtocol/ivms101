@@ -255,7 +255,15 @@ import {
 
   // Testing
   arbitraries,               // Fast-check arbitraries
-  Core,                      // Shared core types
+
+  // Shared core types (also exported directly)
+  type CountryCode,          // ISO country codes
+  type AddressTypeCode,      // Address type codes
+  type NaturalPersonNameTypeCode,  // Natural person name type codes
+  type LegalPersonNameTypeCode,    // Legal person name type codes
+  type Address,              // Address structure
+  type NationalIdentification,     // National ID structure
+  // ... and other core types
 } from 'ivms101';
 ```
 
