@@ -17,6 +17,150 @@ A TypeScript library providing type definitions, validation, and conversion util
 npm install ivms101
 ```
 
+## Upgrading from v1.x to v2.0
+
+Version 2.0 introduces a **2023-first API** with breaking changes. Here's how to upgrade:
+
+### Breaking Changes
+
+1. **Main export now defaults to IVMS101.2023**
+   - `IVMS101` type is now `IVMS101_2023.IVMS101` (not a union)
+   - All type exports from main package are 2023 types
+
+2. **2020 support moved to legacy submodule**
+   - Import 2020 types from `'ivms101/legacy'` instead of main package
+   - Conversion functions moved to legacy module
+
+3. **New validation API**
+   - New `validate()` function replaces `validateIVMS101()`
+   - Defaults to 2023 validation
+
+### Migration Guide
+
+#### If you're using both 2020 and 2023 (union types)
+
+**Before (v1.x):**
+```typescript
+import { IVMS101, IVMS101_2020, IVMS101_2023 } from 'ivms101';
+
+// IVMS101 was a union type
+function process(data: IVMS101) {
+  // data could be either version
+}
+```
+
+**After (v2.0):**
+```typescript
+import { IVMS101 } from 'ivms101'; // This is now 2023 only
+import { IVMS101_2020, IVMS101Schema } from 'ivms101/legacy';
+
+// For union type, import from legacy
+import type { IVMS101Type } from 'ivms101/legacy';
+
+function process(data: IVMS101Type) {
+  // data can be either version (union)
+}
+
+// OR: Keep separate functions for each version
+function process2023(data: IVMS101) { /* ... */ }
+function process2020(data: IVMS101_2020.IVMS101) { /* ... */ }
+```
+
+#### If you're using 2020 types
+
+**Before (v1.x):**
+```typescript
+import { IVMS101_2020 } from 'ivms101';
+
+const data: IVMS101_2020.IVMS101 = { /* ... */ };
+```
+
+**After (v2.0):**
+```typescript
+import { IVMS101_2020 } from 'ivms101/legacy';
+
+const data: IVMS101_2020.IVMS101 = { /* ... */ };
+```
+
+#### If you're using conversion functions
+
+**Before (v1.x):**
+```typescript
+import { convertTo2023, convertFrom2023 } from 'ivms101';
+```
+
+**After (v2.0):**
+```typescript
+import { convertTo2023, convertFrom2023 } from 'ivms101/legacy';
+```
+
+#### If you're using validation
+
+**Before (v1.x):**
+```typescript
+import { validateIVMS101, isValidIVMS101 } from 'ivms101';
+
+const validated = validateIVMS101(data); // accepts either version
+```
+
+**After (v2.0):**
+```typescript
+// Option 1: Use new validate() function (defaults to 2023)
+import { validate } from 'ivms101';
+const validated = validate(data); // validates as 2023
+const validated2020 = validate(data, { version: '2020' });
+
+// Option 2: Use legacy validateIVMS101 for union validation
+import { validateIVMS101, isValidIVMS101 } from 'ivms101/legacy';
+const validated = validateIVMS101(data); // accepts either version
+```
+
+#### If you're using type guards
+
+**Before (v1.x):**
+```typescript
+import { isValidIVMS101_2023 } from 'ivms101';
+```
+
+**After (v2.0):**
+```typescript
+// 2023 type guard in main package
+import { isValidIVMS101_2023 } from 'ivms101';
+
+// 2020 type guard in legacy package
+import { isValidIVMS101_2020 } from 'ivms101/legacy';
+```
+
+#### Quick Migration Checklist
+
+- [ ] Replace `import { IVMS101_2020, ... } from 'ivms101'` with `import { IVMS101_2020, ... } from 'ivms101/legacy'`
+- [ ] Replace `import { convertTo2023, convertFrom2023 } from 'ivms101'` with `import { convertTo2023, convertFrom2023 } from 'ivms101/legacy'`
+- [ ] If using union types, import `IVMS101Type` from `'ivms101/legacy'` instead of using `IVMS101`
+- [ ] Update validation calls to use new `validate()` function or import legacy validators
+- [ ] Update type annotations: `IVMS101` is now 2023-only (not a union)
+
+### What Stays the Same
+
+✅ All 2023 types work exactly as before (just imported from main package)
+✅ All conversion logic is unchanged (just moved to legacy module)
+✅ All validation schemas work the same way
+✅ `ensureVersion()` and `ivms101_version()` still in main package
+✅ Arbitraries still work the same way
+✅ All tests pass without changes
+
+### Recommended Approach
+
+For new code, use the 2023-first API:
+```typescript
+import { validate, type IVMS101 } from 'ivms101';
+```
+
+For existing code that needs 2020 support, add legacy import:
+```typescript
+import { validate, type IVMS101 } from 'ivms101';
+import { IVMS101_2020, convertTo2023 } from 'ivms101/legacy';
+```
+
 ## Quick Start
 
 ### Working with IVMS101.2023 (Default)

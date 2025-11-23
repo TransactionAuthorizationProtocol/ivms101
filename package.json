@@ -1,7 +1,7 @@
 {
 	"name": "ivms101",
-	"version": "1.3.0",
-	"description": "IVMS101 and IVMS101.2023 TypeScript library",
+	"version": "2.0.0",
+	"description": "IVMS101.2023 TypeScript library with legacy 2020 support",
 	"type": "module",
 	"main": "dist/index.cjs",
 	"module": "dist/index.js",
