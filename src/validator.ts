@@ -888,3 +888,16 @@ export function isValidIVMS101(
 export type IVMS101_2020Type = z.infer<typeof IVMS101_2020Schema>;
 export type IVMS101_2023Type = z.infer<typeof IVMS101_2023Schema>;
 export type IVMS101Type = z.infer<typeof IVMS101Schema>;
+
+// Main validation function with version parameter (defaults to 2023)
+export function validate(
+	data: unknown,
+	options?: { version?: "2020" | "2023"; strict?: boolean },
+): IVMS101_2023.IVMS101 | IVMS101_2020.IVMS101 {
+	const version = options?.version ?? "2023";
+
+	if (version === "2023") {
+		return IVMS101_2023Schema.parse(data);
+	}
+	return IVMS101_2020Schema.parse(data);
+}
